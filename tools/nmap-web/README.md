@@ -1,65 +1,89 @@
-# nmap-web
+# Rainmap Lite
 
-Browser-based terminal with nmap and networking tools. Access a full bash shell from any browser — no WSL needed.
+Modern web-based nmap scanner. Inspired by the original [Rainmap](http://nmap.org/rainmap/) project.
+
+Single Docker container — no PostgreSQL, no RabbitMQ, no Celery. Just Flask + SQLite + nmap.
+
+## Screenshot
+
+Dark brutalist UI. Neon green on black. Monospace everything.
 
 ## Quick Start
-
-On your Linux/GPU box:
 
 ```bash
 cd tools/nmap-web
 docker compose up -d --build
 ```
 
-Then open in your Windows browser:
+Open in your browser:
 ```
-http://<your-linux-box-ip>:7681
-```
-
-You'll get a full bash terminal with nmap ready to go.
-
-## First Thing to Run
-
-```bash
-help.sh
+http://localhost:8080
 ```
 
-Shows all available commands and scripts.
+Default login: `admin` / `admin`
 
-## Scripts
+## Features
 
-| Script | Usage | Description |
-|--------|-------|-------------|
-| `quickscan.sh` | `quickscan.sh 192.168.1.0/24` | Ping sweep / host discovery |
-| `portscan.sh` | `portscan.sh 10.0.0.5 1-1000` | Port scan with service detection |
-| `vulnscan.sh` | `vulnscan.sh 10.0.0.5` | NSE vulnerability scripts |
-| `stealthscan.sh` | `stealthscan.sh 10.0.0.5` | SYN stealth scan |
-| `recon.sh` | `recon.sh example.com` | Full recon (whois, DNS, ports, OS) |
-| `help.sh` | `help.sh` | Show this reference |
+- **Web UI** — Launch and monitor scans from any browser
+- **Scan presets** — One-click buttons for common scan types (stealth, vuln, service detection, etc.)
+- **Live status** — Dashboard auto-refreshes while scans run
+- **Output formats** — View results as text, HTML (xsltproc), or download raw XML
+- **Scan history** — All scans saved with SQLite, persist across restarts
+- **No dependencies** — Single container, no external DB or message queue
 
-## Scan Results
+## Configuration
 
-All results save to `/scans/` inside the container, mapped to `./results/` on your host.
+Environment variables in `docker-compose.yml`:
 
-## Security Notes
-
-- **Do NOT expose port 7681 to the internet** — this is an unauthenticated shell
-- For remote access, put it behind a VPN or SSH tunnel
-- To add basic auth, use: `ttyd --credential user:password bash`
-
-### Adding a Password
-
-Edit the Dockerfile CMD line:
-```dockerfile
-CMD ["ttyd", "--port", "7681", "--writable", "--credential", "admin:yourpassword", "bash"]
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ADMIN_USER` | `admin` | Login username |
+| `ADMIN_PASS` | `admin` | Login password |
+| `SECRET_KEY` | random | Flask session key |
+| `PORT` | `8080` | Web server port |
 
 ## Network Mode
 
-Using `network_mode: host` so nmap scans your real network, not the Docker bridge. If you want to scan remote targets only (not your LAN), you can remove that line.
+Using `network_mode: host` so nmap scans your actual network. If you only need to scan remote/external targets, you can remove that line and just use the default bridge network.
 
-## Stopping
+## Data Persistence
 
-```bash
-docker compose down
+- Scan results: `./data/scans/` (XML, HTML, TXT files)
+- Database: `./data/db/rainmap.db` (SQLite)
+
+Both survive container restarts and rebuilds.
+
+## Security
+
+⚠️ **Do NOT expose port 8080 to the public internet** without:
+- Changing the default password
+- Putting it behind a reverse proxy with HTTPS
+- Or restricting access via firewall/VPN
+
+This is a pentesting tool — treat it like one.
+
+## Scan Presets
+
+The "New Scan" page has one-click preset buttons:
+
+| Preset | Flags | Use Case |
+|--------|-------|----------|
+| Ping Sweep | `-sn` | Host discovery only |
+| Service Detection | `-sV -sC -T4` | Find services + versions |
+| Vuln Scan | `-sV --script=vuln -T4` | Run vuln NSE scripts |
+| Stealth SYN | `-sS -T4 --top-ports 1000` | Half-open scan |
+| Aggressive | `-A -T4` | OS + version + scripts + traceroute |
+| UDP Top 50 | `-sU --top-ports 50` | Common UDP services |
+| All Ports | `-p- -T4` | Full 65535 port scan |
+| OS Detection | `-O --osscan-guess` | Operating system fingerprint |
+
+Or type any valid nmap flags manually.
+
+## Architecture
+
 ```
+Browser → Flask (port 8080) → nmap subprocess → results to /app/scans/
+                            → SQLite (/app/db/rainmap.db)
+```
+
+No workers, no queues. Scans run as background threads. Simple.

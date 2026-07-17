@@ -1,15 +1,21 @@
 version: '3.8'
 
 services:
-  nmap-web:
+  rainmap:
     build: .
-    container_name: nmap-web
+    container_name: rainmap
     ports:
-      - "7681:7681"
+      - "8080:8080"
     volumes:
-      - ./results:/scans
+      - ./data/scans:/app/scans
+      - ./data/db:/app/db
+    environment:
+      - ADMIN_USER=admin
+      - ADMIN_PASS=admin
+      - SECRET_KEY=change-this-to-something-random
+      - PORT=8080
     cap_add:
       - NET_RAW      # Required for SYN scans
       - NET_ADMIN    # Required for OS detection
-    network_mode: host  # Scan your actual network (not docker network)
+    network_mode: host  # Scan your real network
     restart: unless-stopped

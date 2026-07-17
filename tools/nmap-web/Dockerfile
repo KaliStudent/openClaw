@@ -1,33 +1,27 @@
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     nmap \
-    ttyd \
-    bash-completion \
+    xsltproc \
     curl \
-    wget \
-    net-tools \
     iputils-ping \
     dnsutils \
     traceroute \
     whois \
     netcat-openbsd \
-    tcpdump \
     && rm -rf /var/lib/apt/lists/*
 
-# Create workspace for scan results
-RUN mkdir -p /scans
+WORKDIR /app
 
-# Copy helper scripts
-COPY scripts/ /usr/local/bin/
-RUN chmod +x /usr/local/bin/*.sh
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-WORKDIR /scans
+COPY . .
 
-EXPOSE 7681
+RUN mkdir -p /app/scans /app/db
 
-# ttyd serves a bash shell on port 7681
-# --writable allows input, -t fontSize=16 for readability
-CMD ["ttyd", "--port", "7681", "--writable", "-t", "fontSize=16", "-t", "theme={'background':'#0a0a0a','foreground':'#ffffff','cursor':'#39ff14','selectionBackground':'#39ff1440'}", "bash"]
+EXPOSE 8080
+
+CMD ["python", "server.py"]
