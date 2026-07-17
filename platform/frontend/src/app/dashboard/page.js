@@ -1,18 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [agents, setAgents] = useState([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) {
-      window.location.href = '/login';
-      return;
-    }
+    if (!stored) { window.location.href = '/login'; return; }
     setUser(JSON.parse(stored));
     fetchAgents();
   }, []);
@@ -20,76 +18,75 @@ export default function DashboardPage() {
   const fetchAgents = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/agents`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/agents`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
       if (res.ok) setAgents(data.agents || []);
-    } catch (err) {
-      console.error('Failed to fetch agents:', err);
-    }
+    } catch (err) { /* silent */ }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-  };
-
-  if (!user) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: '100vh' }}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl">🤖</span>
-            <h1 className="text-lg font-bold">MainStreet AI</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">Welcome, {user.name}</span>
-            <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-700">
+      <header className="container">
+        <div className="header">
+          <Link href="/" className="header-logo">MAINSTREET_AI</Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <span className="mono text-muted" style={{ fontSize: '0.8rem' }}>{user.name}</span>
+            <button
+              onClick={() => { localStorage.clear(); window.location.href = '/login'; }}
+              className="mono"
+              style={{ fontSize: '0.8rem', color: 'var(--neon-magenta)', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
               Logout
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="container" style={{ paddingTop: '48px' }}>
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Active Agents" value={agents.filter(a => a.status === 'deployed').length} />
-          <StatCard label="Total Agents" value={agents.length} />
-          <StatCard label="Conversations Today" value="—" />
-          <StatCard label="Calls Today" value="—" />
+        <div className="grid grid-4" style={{ marginBottom: '48px' }}>
+          <div className="stat">
+            <div className="stat-value">{agents.filter(a => a.status === 'deployed').length}</div>
+            <div className="stat-label">Active</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value" style={{ color: 'var(--neon-orange)' }}>{agents.length}</div>
+            <div className="stat-label">Total Agents</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">—</div>
+            <div className="stat-label">Conversations</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">—</div>
+            <div className="stat-label">Calls Today</div>
+          </div>
         </div>
 
-        {/* Agents Section */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Your Agents</h2>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
-          >
-            + Create Agent
+        {/* Agents */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h3>Your Agents</h3>
+          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
+            + New Agent
           </button>
         </div>
 
         {agents.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <span className="text-5xl mb-4 block">🤖</span>
-            <h3 className="text-xl font-semibold mb-2">No agents yet</h3>
-            <p className="text-gray-600 mb-6">Create your first AI agent to start serving customers 24/7.</p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium"
-            >
-              Create Your First Agent
+          <div className="card" style={{ textAlign: 'center', padding: '64px 24px' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '16px' }}>◉</div>
+            <h4 style={{ marginBottom: '8px' }}>No agents deployed</h4>
+            <p className="text-muted" style={{ marginBottom: '24px' }}>Create your first AI agent to start serving customers 24/7.</p>
+            <button className="btn btn-secondary" onClick={() => setShowCreate(true)}>
+              Create Agent →
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-3">
             {agents.map(agent => (
               <AgentCard key={agent.id} agent={agent} />
             ))}
@@ -97,54 +94,41 @@ export default function DashboardPage() {
         )}
       </main>
 
-      {/* Create Agent Modal (placeholder) */}
-      {showCreateModal && (
-        <CreateAgentModal onClose={() => setShowCreateModal(false)} onCreated={fetchAgents} />
-      )}
-    </div>
-  );
-}
-
-function StatCard({ label, value }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
+      {showCreate && <CreateModal onClose={() => setShowCreate(false)} onCreated={() => { setShowCreate(false); fetchAgents(); }} />}
     </div>
   );
 }
 
 function AgentCard({ agent }) {
-  const statusColor = agent.status === 'deployed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
-  
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start mb-3">
-        <h4 className="font-semibold text-lg">{agent.name}</h4>
-        <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor}`}>
+    <div className="card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+        <h4>{agent.name}</h4>
+        <span className={`tag ${agent.status === 'deployed' ? 'tag-green' : 'tag-orange'}`}>
           {agent.status}
         </span>
       </div>
-      <p className="text-gray-600 text-sm mb-3">{agent.business_profile?.name}</p>
-      <div className="flex flex-wrap gap-1 mb-4">
+      <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '16px' }}>
+        {agent.business_profile?.name}
+      </p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '16px' }}>
         {agent.skills?.enabled?.slice(0, 4).map(skill => (
-          <span key={skill} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-            {skill.replace('_', ' ')}
-          </span>
+          <span key={skill} className="tag">{skill.replace(/_/g, ' ')}</span>
         ))}
-        {(agent.skills?.enabled?.length || 0) > 4 && (
-          <span className="text-xs text-gray-500">+{agent.skills.enabled.length - 4} more</span>
-        )}
       </div>
-      <div className="flex space-x-2">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">Configure</button>
-        <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">Test Chat</button>
+      <div style={{ display: 'flex', gap: '16px' }}>
+        <button className="mono text-green" style={{ fontSize: '0.8rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+          Configure
+        </button>
+        <button className="mono text-orange" style={{ fontSize: '0.8rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+          Test Chat
+        </button>
       </div>
     </div>
   );
 }
 
-function CreateAgentModal({ onClose, onCreated }) {
+function CreateModal({ onClose, onCreated }) {
   const [form, setForm] = useState({
     name: '',
     business_name: '',
@@ -155,157 +139,84 @@ function CreateAgentModal({ onClose, onCreated }) {
   });
   const [loading, setLoading] = useState(false);
 
+  const allSkills = [
+    'appointment_scheduling', 'lead_qualification', 'receptionist_phone',
+    'faq_management', 'basic_coding', 'landing_page_builder'
+  ];
+
   const handleCreate = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/agents`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/agents`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
           name: form.name,
-          business_profile: {
-            name: form.business_name,
-            type: form.business_type,
-            description: form.description
-          },
+          business_profile: { name: form.business_name, type: form.business_type, description: form.description },
           skills: form.skills,
           languages: form.languages
         })
       });
-
-      if (res.ok) {
-        onCreated();
-        onClose();
-      }
-    } catch (err) {
-      console.error('Failed to create agent:', err);
-    } finally {
-      setLoading(false);
-    }
+      if (res.ok) onCreated();
+    } catch (err) { /* silent */ }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold">Create New Agent</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
+      <div style={{ background: 'var(--bg-elevated)', border: '2px solid var(--neon-green)', width: '100%', maxWidth: '560px', maxHeight: '90vh', overflow: 'auto', padding: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <h3>New Agent</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
         </div>
 
-        <form onSubmit={handleCreate} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Agent Name</label>
-            <input
-              type="text"
-              required
-              value={form.name}
-              onChange={(e) => setForm({...form, name: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="My Business Assistant"
-            />
+        <form onSubmit={handleCreate}>
+          <div style={{ marginBottom: '20px' }}>
+            <label>Agent Name</label>
+            <input type="text" required value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} placeholder="My Business Assistant" />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-            <input
-              type="text"
-              required
-              value={form.business_name}
-              onChange={(e) => setForm({...form, business_name: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Acme Auto Repair"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Business Type</label>
-            <select
-              value={form.business_type}
-              onChange={(e) => setForm({...form, business_type: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select type...</option>
-              <option value="auto_repair">Auto Repair</option>
-              <option value="medical">Medical</option>
-              <option value="dental">Dental</option>
-              <option value="legal">Legal</option>
-              <option value="restaurant">Restaurant</option>
-              <option value="salon">Salon</option>
-              <option value="retail">Retail</option>
-              <option value="construction">Construction</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => setForm({...form, description: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              rows={3}
-              placeholder="Brief description of what this business does..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Languages</label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
-                <input type="checkbox" checked={form.languages.includes('en')}
-                  onChange={(e) => {
-                    const langs = e.target.checked 
-                      ? [...form.languages, 'en'] 
-                      : form.languages.filter(l => l !== 'en');
-                    setForm({...form, languages: langs});
-                  }}
-                  className="mr-2"
-                />
-                English
-              </label>
-              <label className="flex items-center">
-                <input type="checkbox" checked={form.languages.includes('es')}
-                  onChange={(e) => {
-                    const langs = e.target.checked 
-                      ? [...form.languages, 'es'] 
-                      : form.languages.filter(l => l !== 'es');
-                    setForm({...form, languages: langs});
-                  }}
-                  className="mr-2"
-                />
-                Español
-              </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+            <div>
+              <label>Business Name</label>
+              <input type="text" required value={form.business_name} onChange={(e) => setForm({...form, business_name: e.target.value})} placeholder="Acme Repair" />
+            </div>
+            <div>
+              <label>Type</label>
+              <select value={form.business_type} onChange={(e) => setForm({...form, business_type: e.target.value})}>
+                <option value="">Select...</option>
+                <option value="auto_repair">Auto Repair</option>
+                <option value="medical">Medical</option>
+                <option value="legal">Legal</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="salon">Salon</option>
+                <option value="retail">Retail</option>
+                <option value="msp">IT / MSP</option>
+                <option value="other">Other</option>
+              </select>
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Skills</label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                'appointment_scheduling',
-                'lead_qualification',
-                'receptionist_phone',
-                'faq_management',
-                'basic_coding',
-                'landing_page_builder'
-              ].map(skill => (
-                <label key={skill} className="flex items-center text-sm">
+          <div style={{ marginBottom: '20px' }}>
+            <label>Description</label>
+            <textarea value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} placeholder="What does this business do?" rows={3} />
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label>Skills</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+              {allSkills.map(skill => (
+                <label key={skill} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer', textTransform: 'none', letterSpacing: 'normal' }}>
                   <input
                     type="checkbox"
                     checked={form.skills.includes(skill)}
                     onChange={(e) => {
-                      const skills = e.target.checked
-                        ? [...form.skills, skill]
-                        : form.skills.filter(s => s !== skill);
+                      const skills = e.target.checked ? [...form.skills, skill] : form.skills.filter(s => s !== skill);
                       setForm({...form, skills});
                     }}
-                    className="mr-2"
+                    style={{ width: 'auto' }}
                   />
                   {skill.replace(/_/g, ' ')}
                 </label>
@@ -313,19 +224,31 @@ function CreateAgentModal({ onClose, onCreated }) {
             </div>
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
-            >
+          <div style={{ marginBottom: '32px' }}>
+            <label>Languages</label>
+            <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+              {[['en', 'English'], ['es', 'Español']].map(([code, name]) => (
+                <label key={code} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer', textTransform: 'none', letterSpacing: 'normal' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.languages.includes(code)}
+                    onChange={(e) => {
+                      const langs = e.target.checked ? [...form.languages, code] : form.languages.filter(l => l !== code);
+                      setForm({...form, languages: langs});
+                    }}
+                    style={{ width: 'auto' }}
+                  />
+                  {name}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={loading}>
               {loading ? 'Creating...' : 'Create Agent'}
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 border border-gray-300 py-2 rounded-lg font-medium hover:bg-gray-50"
-            >
+            <button type="button" className="btn btn-ghost" onClick={onClose} style={{ flex: 1 }}>
               Cancel
             </button>
           </div>

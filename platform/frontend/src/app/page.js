@@ -2,127 +2,161 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl">🤖</span>
-            <h1 className="text-xl font-bold text-gray-900">MainStreet AI</h1>
-          </div>
-          <nav className="flex items-center space-x-4">
-            <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium">
-              Login
-            </Link>
-            <Link href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">
-              Get Started
-            </Link>
+      <header className="container">
+        <div className="header">
+          <div className="header-logo">MAINSTREET_AI</div>
+          <nav className="header-nav">
+            <Link href="/login">Login</Link>
+            <Link href="/register" className="btn btn-primary">Get Started</Link>
           </nav>
         </div>
       </header>
 
       {/* Hero */}
-      <main className="flex-1">
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-              Your Business, Always Available
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Deploy an AI assistant that answers calls, chats with customers, and handles appointments — 
-              in English and Spanish. Perfect for any small business.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Link href="/register" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-semibold text-lg">
-                Start Free Trial
-              </Link>
-              <Link href="#features" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-100 font-semibold text-lg">
-                Learn More
-              </Link>
-            </div>
+      <section className="container" style={{ paddingTop: '120px', paddingBottom: '120px' }}>
+        <div style={{ maxWidth: '800px' }}>
+          <p className="mono text-orange" style={{ fontSize: '0.875rem', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            AI-powered business automation
+          </p>
+          <h1 style={{ marginBottom: '24px' }}>
+            Your business.<br />
+            <span className="text-green">Never closed.</span>
+          </h1>
+          <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', marginBottom: '48px', maxWidth: '600px' }}>
+            Deploy an AI agent that answers calls, chats with customers, 
+            schedules appointments, and handles operations — in English and Spanish. 
+            24/7. No breaks. No sick days.
+          </p>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <Link href="/register" className="btn btn-primary">Deploy Your Agent →</Link>
+            <Link href="#capabilities" className="btn btn-ghost">See Capabilities</Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Features */}
-        <section id="features" className="bg-white py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-3xl font-bold text-center mb-12">What Your AI Agent Can Do</h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              <FeatureCard
-                emoji="💬"
-                title="Website Chatbot"
-                description="Embed an intelligent chatbot on your website. Answer questions, qualify leads, and schedule appointments 24/7."
-              />
-              <FeatureCard
-                emoji="📞"
-                title="Phone Receptionist"
-                description="Never miss a call. Your AI answers the phone professionally, takes messages, and routes important calls."
-              />
-              <FeatureCard
-                emoji="🌐"
-                title="Bilingual Support"
-                description="Serve all your customers in English and Spanish. The AI switches languages naturally based on the caller."
-              />
-              <FeatureCard
-                emoji="📅"
-                title="Appointment Scheduling"
-                description="Customers can book, reschedule, or cancel appointments through chat or phone without waiting."
-              />
-              <FeatureCard
-                emoji="🏪"
-                title="Any Business Type"
-                description="From mechanic shops to doctor offices, restaurants to law firms. Configured for YOUR business."
-              />
-              <FeatureCard
-                emoji="🔧"
-                title="Add-on Services"
-                description="Need a landing page? Basic automation? Full app development? Unlock capabilities as you grow."
-              />
+      {/* Stats bar */}
+      <section style={{ borderTop: '2px solid var(--border-default)', borderBottom: '2px solid var(--border-default)' }}>
+        <div className="container">
+          <div className="grid grid-4" style={{ padding: '32px 0' }}>
+            <div className="stat">
+              <div className="stat-value">24/7</div>
+              <div className="stat-label">Availability</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value" style={{ color: 'var(--neon-orange)' }}>2</div>
+              <div className="stat-label">Languages (EN/ES)</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">&lt;2s</div>
+              <div className="stat-label">Response Time</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value" style={{ color: 'var(--neon-magenta)' }}>∞</div>
+              <div className="stat-label">Concurrent Calls</div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* How it works */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-3xl font-bold text-center mb-12">Up and Running in Minutes</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-4xl mb-4">1️⃣</div>
-                <h4 className="text-xl font-semibold mb-2">Sign Up</h4>
-                <p className="text-gray-600">Create your account and tell us about your business.</p>
-              </div>
-              <div>
-                <div className="text-4xl mb-4">2️⃣</div>
-                <h4 className="text-xl font-semibold mb-2">Configure</h4>
-                <p className="text-gray-600">Set your hours, services, personality, and enable features.</p>
-              </div>
-              <div>
-                <div className="text-4xl mb-4">3️⃣</div>
-                <h4 className="text-xl font-semibold mb-2">Deploy</h4>
-                <p className="text-gray-600">Add the chat widget to your site or connect your phone number.</p>
-              </div>
+      {/* Capabilities */}
+      <section id="capabilities" className="container" style={{ padding: '100px 0' }}>
+        <h2 style={{ marginBottom: '12px' }}>Capabilities</h2>
+        <p className="text-muted" style={{ marginBottom: '48px', fontSize: '1.1rem' }}>
+          One agent. Every channel. Every task.
+        </p>
+        <div className="grid grid-3">
+          <FeatureCard
+            icon="◉"
+            title="Website Chatbot"
+            description="Embed on your site. Answers questions, qualifies leads, books appointments. Never sleeps."
+            color="green"
+          />
+          <FeatureCard
+            icon="◎"
+            title="Phone Receptionist"
+            description="Answers calls in your brand voice. Takes messages. Routes urgent calls. Handles the rest."
+            color="orange"
+          />
+          <FeatureCard
+            icon="◈"
+            title="Bilingual"
+            description="Fluent English and Spanish. Switches naturally. Serves all your customers equally."
+            color="green"
+          />
+          <FeatureCard
+            icon="▣"
+            title="Appointments"
+            description="Books, reschedules, cancels. Sends confirmations. Syncs with your calendar."
+            color="orange"
+          />
+          <FeatureCard
+            icon="◐"
+            title="Knowledge Base"
+            description="Feed it your docs, website, policies. It learns your business and answers accurately."
+            color="magenta"
+          />
+          <FeatureCard
+            icon="⬡"
+            title="Lead Generation"
+            description="Qualifies prospects. Scores leads. Builds contact lists. Automates follow-up."
+            color="green"
+          />
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section style={{ borderTop: '2px solid var(--border-default)', padding: '100px 0' }}>
+        <div className="container">
+          <h2 style={{ marginBottom: '48px' }}>How it works</h2>
+          <div className="grid grid-3">
+            <div>
+              <div className="mono text-green" style={{ fontSize: '2rem', marginBottom: '12px' }}>01</div>
+              <h4 style={{ marginBottom: '8px' }}>Configure</h4>
+              <p className="text-muted">Tell us your business. Hours, services, personality. We build your agent.</p>
+            </div>
+            <div>
+              <div className="mono text-orange" style={{ fontSize: '2rem', marginBottom: '12px' }}>02</div>
+              <h4 style={{ marginBottom: '8px' }}>Deploy</h4>
+              <p className="text-muted">One line of code on your site. One phone number. You're live.</p>
+            </div>
+            <div>
+              <div className="mono text-magenta" style={{ fontSize: '2rem', marginBottom: '12px' }}>03</div>
+              <h4 style={{ marginBottom: '8px' }}>Scale</h4>
+              <p className="text-muted">Add skills. Add channels. Your agent grows with your business.</p>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ borderTop: '2px solid var(--border-default)', padding: '100px 0' }}>
+        <div className="container text-center">
+          <h2 style={{ marginBottom: '16px' }}>Ready to stop missing calls?</h2>
+          <p className="text-muted" style={{ marginBottom: '32px' }}>Set up in under 5 minutes. No credit card required.</p>
+          <Link href="/register" className="btn btn-primary">Get Started Free →</Link>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2026 MainStreet AI. All rights reserved.</p>
+      <footer style={{ borderTop: '2px solid var(--border-default)', padding: '32px 0' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span className="mono text-muted" style={{ fontSize: '0.8rem' }}>© 2026 MAINSTREET_AI</span>
+          <span className="mono text-muted" style={{ fontSize: '0.8rem' }}>BUILT FOR SMALL BUSINESS</span>
         </div>
       </footer>
     </div>
   );
 }
 
-function FeatureCard({ emoji, title, description }) {
+function FeatureCard({ icon, title, description, color }) {
+  const colorVar = `var(--neon-${color})`;
   return (
-    <div className="p-6 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all">
-      <div className="text-3xl mb-3">{emoji}</div>
-      <h4 className="text-lg font-semibold mb-2">{title}</h4>
-      <p className="text-gray-600">{description}</p>
+    <div className="card" style={{ borderColor: 'var(--border-default)' }}>
+      <div style={{ fontSize: '1.5rem', color: colorVar, marginBottom: '12px' }}>{icon}</div>
+      <h4 style={{ marginBottom: '8px' }}>{title}</h4>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>{description}</p>
     </div>
   );
 }

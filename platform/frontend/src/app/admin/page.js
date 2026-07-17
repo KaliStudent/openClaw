@@ -1,190 +1,190 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function AdminPage() {
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [stats, setStats] = useState(null);
+  const [tab, setTab] = useState('dashboard');
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (!stored) {
-      window.location.href = '/login';
-      return;
-    }
+    if (!stored) { window.location.href = '/login'; return; }
     const parsed = JSON.parse(stored);
-    if (parsed.role !== 'admin') {
-      window.location.href = '/dashboard';
-      return;
-    }
+    if (parsed.role !== 'admin') { window.location.href = '/dashboard'; return; }
     setUser(parsed);
   }, []);
 
-  if (!user) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!user) return null;
+
+  const tabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+    { id: 'agents', label: 'Agents', icon: '◎' },
+    { id: 'users', label: 'Users', icon: '◈' },
+    { id: 'skills', label: 'Skills', icon: '▣' },
+    { id: 'deployments', label: 'Deploy', icon: '◐' },
+    { id: 'logs', label: 'Logs', icon: '⬡' },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white min-h-screen p-4">
-        <div className="flex items-center space-x-2 mb-8">
-          <span className="text-xl">🤖</span>
-          <h1 className="text-lg font-bold">Admin Panel</h1>
-        </div>
+      <aside style={{ width: '220px', background: 'var(--bg-secondary)', borderRight: '2px solid var(--border-default)', padding: '24px 16px', display: 'flex', flexDirection: 'column' }}>
+        <Link href="/" className="mono text-green" style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '48px', display: 'block' }}>
+          MAINSTREET_AI
+        </Link>
 
-        <nav className="space-y-1">
-          <NavItem active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} label="📊 Dashboard" />
-          <NavItem active={activeTab === 'agents'} onClick={() => setActiveTab('agents')} label="🤖 Agent Builder" />
-          <NavItem active={activeTab === 'users'} onClick={() => setActiveTab('users')} label="👥 Users" />
-          <NavItem active={activeTab === 'skills'} onClick={() => setActiveTab('skills')} label="🧠 Skills" />
-          <NavItem active={activeTab === 'deployments'} onClick={() => setActiveTab('deployments')} label="🚀 Deployments" />
-          <NavItem active={activeTab === 'logs'} onClick={() => setActiveTab('logs')} label="📋 Logs" />
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+          {tabs.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '10px 12px',
+                background: tab === t.id ? 'var(--bg-hover)' : 'transparent',
+                border: tab === t.id ? '1px solid var(--neon-green)' : '1px solid transparent',
+                color: tab === t.id ? 'var(--neon-green)' : 'var(--text-secondary)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
+                cursor: 'pointer', textAlign: 'left',
+                textTransform: 'uppercase', letterSpacing: '0.05em'
+              }}
+            >
+              <span>{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
         </nav>
 
-        <div className="absolute bottom-4 left-4">
-          <button
-            onClick={() => {
-              localStorage.clear();
-              window.location.href = '/login';
-            }}
-            className="text-sm text-gray-400 hover:text-white"
-          >
-            Logout
-          </button>
-        </div>
+        <button
+          onClick={() => { localStorage.clear(); window.location.href = '/login'; }}
+          className="mono"
+          style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '8px 12px' }}
+        >
+          Logout
+        </button>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        {activeTab === 'dashboard' && <AdminDashboard />}
-        {activeTab === 'agents' && <AgentBuilder />}
-        {activeTab === 'users' && <UsersPanel />}
-        {activeTab === 'skills' && <SkillsPanel />}
-        {activeTab === 'deployments' && <DeploymentsPanel />}
-        {activeTab === 'logs' && <LogsPanel />}
+      {/* Main */}
+      <main style={{ flex: 1, padding: '32px 48px', overflow: 'auto' }}>
+        {tab === 'dashboard' && <AdminDashboard />}
+        {tab === 'agents' && <AdminAgents />}
+        {tab === 'users' && <AdminUsers />}
+        {tab === 'skills' && <AdminSkills />}
+        {tab === 'deployments' && <AdminDeployments />}
+        {tab === 'logs' && <AdminLogs />}
       </main>
     </div>
-  );
-}
-
-function NavItem({ active, onClick, label }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-        active ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-      }`}
-    >
-      {label}
-    </button>
   );
 }
 
 function AdminDashboard() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Total Users" value="0" trend="+0 today" />
-        <StatCard label="Active Agents" value="0" trend="0 deployed" />
-        <StatCard label="Conversations" value="0" trend="0 today" />
-        <StatCard label="Phone Calls" value="0" trend="0 today" />
+      <h2 style={{ marginBottom: '32px' }}>Dashboard</h2>
+      <div className="grid grid-4" style={{ marginBottom: '48px' }}>
+        <div className="stat">
+          <div className="stat-value">0</div>
+          <div className="stat-label">Users</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value" style={{ color: 'var(--neon-orange)' }}>0</div>
+          <div className="stat-label">Agents</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">0</div>
+          <div className="stat-label">Conversations</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value" style={{ color: 'var(--neon-magenta)' }}>0</div>
+          <div className="stat-label">Calls</div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="font-semibold text-lg mb-4">Recent Activity</h3>
-        <p className="text-gray-500">No activity yet. Deploy an agent to see activity here.</p>
+      <div className="card">
+        <h4 style={{ marginBottom: '12px' }}>Recent Activity</h4>
+        <p className="text-muted">No activity yet. Deploy an agent to start.</p>
       </div>
     </div>
   );
 }
 
-function AgentBuilder() {
+function AdminAgents() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Agent Builder</h2>
-      <p className="text-gray-600 mb-6">Create and configure agent templates that can be deployed to customer accounts.</p>
-      
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="font-semibold text-lg mb-4">Agent Creation Interface</h3>
-        <p className="text-gray-500 mb-4">
-          This interface allows you to build agents with specific skill combinations, 
-          configure their personality and capabilities, and deploy them to customer environments.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <span className="text-3xl mb-2 block">🧠</span>
-            <h4 className="font-medium">Master Agent</h4>
-            <p className="text-sm text-gray-500">Full capability — all skills enabled</p>
-            <button className="mt-3 text-sm text-blue-600 hover:underline">Deploy as Master</button>
-          </div>
-          
-          <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <span className="text-3xl mb-2 block">⚡</span>
-            <h4 className="font-medium">Specialist Agent</h4>
-            <p className="text-sm text-gray-500">Single skill focus — optimized for one task</p>
-            <button className="mt-3 text-sm text-blue-600 hover:underline">Create Specialist</button>
-          </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <h2>Agent Builder</h2>
+        <button className="btn btn-primary">+ Create Template</button>
+      </div>
+      <div className="grid grid-2">
+        <div className="card" style={{ textAlign: 'center', padding: '48px 24px' }}>
+          <div className="text-green" style={{ fontSize: '2rem', marginBottom: '12px' }}>◉</div>
+          <h4 style={{ marginBottom: '8px' }}>Master Agent</h4>
+          <p className="text-muted" style={{ fontSize: '0.85rem' }}>Full capability — all skills</p>
+        </div>
+        <div className="card" style={{ textAlign: 'center', padding: '48px 24px' }}>
+          <div className="text-orange" style={{ fontSize: '2rem', marginBottom: '12px' }}>◎</div>
+          <h4 style={{ marginBottom: '8px' }}>Specialist</h4>
+          <p className="text-muted" style={{ fontSize: '0.85rem' }}>Single skill focus</p>
         </div>
       </div>
     </div>
   );
 }
 
-function UsersPanel() {
+function AdminUsers() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Users</h2>
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <p className="text-gray-500">No users registered yet.</p>
+      <h2 style={{ marginBottom: '32px' }}>Users</h2>
+      <div className="card">
+        <p className="text-muted">No users registered yet.</p>
       </div>
     </div>
   );
 }
 
-function SkillsPanel() {
+function AdminSkills() {
   const skills = [
     { id: 'core_conversation', name: 'Core Conversation', category: 'core', status: 'active' },
     { id: 'business_info', name: 'Business Info', category: 'core', status: 'active' },
     { id: 'language', name: 'Multilingual', category: 'core', status: 'active' },
     { id: 'escalation', name: 'Escalation', category: 'core', status: 'active' },
-    { id: 'appointment_scheduling', name: 'Appointment Scheduling', category: 'operations', status: 'active' },
-    { id: 'lead_qualification', name: 'Lead Qualification', category: 'sales', status: 'active' },
+    { id: 'appointment_scheduling', name: 'Appointments', category: 'ops', status: 'active' },
+    { id: 'lead_qualification', name: 'Lead Qualifier', category: 'sales', status: 'active' },
     { id: 'receptionist_phone', name: 'Phone Receptionist', category: 'voice', status: 'active' },
-    { id: 'faq_management', name: 'FAQ Management', category: 'support', status: 'active' },
-    { id: 'basic_coding', name: 'Basic Coding', category: 'technical', status: 'active' },
-    { id: 'landing_page_builder', name: 'Landing Page Builder', category: 'technical', status: 'active' },
-    { id: 'fullstack_dev', name: 'Full-Stack Development', category: 'addon', status: 'addon' },
+    { id: 'faq_management', name: 'FAQ Bot', category: 'support', status: 'active' },
+    { id: 'basic_coding', name: 'Basic Coding', category: 'tech', status: 'active' },
+    { id: 'landing_page_builder', name: 'Page Builder', category: 'tech', status: 'active' },
+    { id: 'fullstack_dev', name: 'Full-Stack Dev', category: 'addon', status: 'addon' },
   ];
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Skill Modules</h2>
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+      <h2 style={{ marginBottom: '32px' }}>Skill Modules</h2>
+      <div style={{ border: '2px solid var(--border-default)' }}>
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Skill</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Category</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+              <th>Skill</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {skills.map(skill => (
-              <tr key={skill.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm font-medium">{skill.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-600 capitalize">{skill.category}</td>
-                <td className="px-4 py-3">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    skill.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
-                  }`}>
-                    {skill.status}
+          <tbody>
+            {skills.map(s => (
+              <tr key={s.id}>
+                <td style={{ fontWeight: 500 }}>{s.name}</td>
+                <td><span className="tag">{s.category}</span></td>
+                <td>
+                  <span className={`tag ${s.status === 'active' ? 'tag-green' : 'tag-orange'}`}>
+                    {s.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  <button className="text-sm text-blue-600 hover:underline">Edit</button>
+                <td>
+                  <button className="mono text-green" style={{ fontSize: '0.75rem', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Edit
+                  </button>
                 </td>
               </tr>
             ))}
@@ -195,34 +195,24 @@ function SkillsPanel() {
   );
 }
 
-function DeploymentsPanel() {
+function AdminDeployments() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Deployments</h2>
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <p className="text-gray-500">No active deployments. Create an agent and deploy it to see it here.</p>
+      <h2 style={{ marginBottom: '32px' }}>Deployments</h2>
+      <div className="card">
+        <p className="text-muted">No active deployments.</p>
       </div>
     </div>
   );
 }
 
-function LogsPanel() {
+function AdminLogs() {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">System Logs</h2>
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <p className="text-gray-500">Conversation logs, API calls, and system events will appear here.</p>
+      <h2 style={{ marginBottom: '32px' }}>System Logs</h2>
+      <div className="card" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+        <p className="text-muted">Waiting for events...</p>
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, trend }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
-      {trend && <p className="text-xs text-gray-500 mt-1">{trend}</p>}
     </div>
   );
 }

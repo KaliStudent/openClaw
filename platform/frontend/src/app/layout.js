@@ -1,16 +1,19 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'MainStreet AI — Small Business AI Assistant',
-  description: 'Deploy intelligent AI agents for your small business. Website chatbots, phone receptionists, and more.',
+  title: 'MainStreet AI',
+  description: 'AI agents for small business. Always on. Always ready.',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
-        {children}
-      </body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
