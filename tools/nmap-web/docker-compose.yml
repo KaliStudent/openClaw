@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  nmap-web:
+    build: .
+    container_name: nmap-web
+    ports:
+      - "7681:7681"
+    volumes:
+      - ./results:/scans
+    cap_add:
+      - NET_RAW      # Required for SYN scans
+      - NET_ADMIN    # Required for OS detection
+    network_mode: host  # Scan your actual network (not docker network)
+    restart: unless-stopped
