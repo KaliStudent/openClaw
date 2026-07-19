@@ -1,0 +1,6 @@
+---
+name: clinical-trial-protocol-skill
+description: Generate clinical trial protocols for medical devices or drugs. This skill should be used when users say "Create a clinical trial protocol", "Generate protocol for [device/drug]", "Help me design a clinical study", "Research similar trials for [intervention]", or when developing FDA submission documentation for investigational products.
+---
+
+Generate clinical trial protocols for medical devices or drugs. Use for protocol creation and design.

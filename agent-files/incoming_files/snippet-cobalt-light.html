@@ -1,0 +1,182 @@
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+
+/* ── Page background (Cobalt Light) ── */
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ddeeff 0%, #e8f0ff 40%, #f0e8ff 100%);
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* ── Decorative orb blobs behind the card ── */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(0,102,255,0.18) 0%, transparent 70%);
+  top: -60px; left: -80px;
+}
+body::after {
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(136,0,255,0.14) 0%, transparent 70%);
+  bottom: -40px; right: -60px;
+}
+
+/* ── Container ── */
+.container {
+  position: relative;
+  z-index: 1;
+  color: #0a1433;
+}
+
+/* ── Decorative pseudo-elements ── */
+.container::before {
+  content: '';
+  background-color: rgba(139, 67, 232, 0.18);
+  position: absolute;
+  border-radius: 50%;
+  width: 6rem;
+  height: 6rem;
+  top: 30%;
+  right: 7%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container::after {
+  content: '';
+  position: absolute;
+  height: 3rem;
+  top: 8%;
+  right: 5%;
+  border: 1px solid rgba(0, 88, 255, 0.35);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Frosted Glass Card — Cobalt Light ── */
+.container .rect {
+  position: relative;
+  z-index: 1;
+  width: 21em;
+  height: 25em;
+  padding: 1.5rem;
+
+  /* ★ Frosted glass on light background ★ */
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(108%);
+          backdrop-filter: blur(28px) saturate(180%) brightness(108%);
+
+  /* Visible border on light bg — use blue tint instead of white */
+  border: 1px solid rgba(0, 102, 255, 0.22);
+  border-radius: 0.7rem;
+
+  /* Subtle top rim highlight */
+  box-shadow:
+    0 8px 32px rgba(0, 60, 180, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(0, 80, 200, 0.08);
+
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Top rim gradient line */
+.container .rect::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255,255,255,0.9),
+    rgba(0,120,255,0.5),
+    rgba(255,255,255,0.9),
+    transparent
+  );
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.container .rect:hover {
+  background: rgba(255, 255, 255, 0.60);
+  box-shadow:
+    0 12px 44px rgba(0, 80, 255, 0.18),
+    0 0 0 1px rgba(0, 157, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 157, 255, 0.7);
+  transform: translateY(-4px);
+}
+
+/* ── Typography ── */
+.container .rect .title {
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: #0033aa;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+}
+
+.container .rect div strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #001a66;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.container .rect div p {
+  margin: 0;
+  font-size: 0.9em;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(0, 20, 80, 0.65);
+}
+
+.container .rect div span {
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: rgba(0, 20, 80, 0.5);
+}
+
+.container .rect div span:nth-child(3) {
+  font-weight: 500;
+  margin-right: 0.2rem;
+  color: rgba(0, 20, 80, 0.7);
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="rect">
+    <span class="title">GLASS EFFECT</span>
+    <div>
+      <strong>JOE WATSON SBF</strong>
+      <p>0000 000 000 0000</p>
+      <span>VALID</span> <span>01/28</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

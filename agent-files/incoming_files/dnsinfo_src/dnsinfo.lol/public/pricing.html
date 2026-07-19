@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing | DNS Intel API</title>
+  <meta name="description" content="Simple, transparent pricing for DNS Intel API. Start with a free trial, then choose the plan that works for you.">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/imgs/favicon/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="128x128" href="/imgs/favicon/favicon128.ico">
+  <link rel="icon" type="image/x-icon" sizes="256x256" href="/imgs/favicon/favicon256.ico">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Animated Background Canvas -->
+  <canvas id="nerve-system"></canvas>
+
+  <!-- Floating Blob Orbs -->
+  <div class="blob-container">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <header>
+    <div class="header-content">
+      <a href="/" class="logo">
+        <div class="logo-icon">
+          <img src="/imgs/logodnsinfo.png" alt="DNS Intel">
+        </div>
+        <div class="logo-text">DNS<span>Intel</span></div>
+      </a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/docs">API Docs</a>
+        <a href="/pricing" class="active">Pricing</a>
+        <a href="/login" class="nav-btn">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="pricing-hero">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Simple Pricing
+      </div>
+      <h1>Unlimited DNS Intelligence <span>for Less</span></h1>
+      <p class="hero-subtitle">
+        Start with a 30-day free trial. No credit card required.
+        Then choose the plan that fits your needs.
+      </p>
+    </section>
+
+    <section class="pricing-grid">
+      <!-- Free Trial -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Free Trial</h3>
+          <div class="price">
+            <span class="amount">$0</span>
+            <span class="period">for 30 days</span>
+          </div>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Unlimited API requests</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> All DNS record types</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Global propagation checks</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Zone health analysis</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Subdomain enumeration</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> WHOIS lookups</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> No credit card required</li>
+        </ul>
+        <a href="/login?action=register" class="btn btn-secondary btn-block">Start Free Trial</a>
+      </div>
+
+      <!-- Monthly -->
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Monthly</h3>
+          <div class="price">
+            <span class="amount">$5</span>
+            <span class="period">/month</span>
+          </div>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Unlimited API requests</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> All DNS record types</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Global propagation checks</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Zone health analysis</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Subdomain enumeration</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> WHOIS lookups</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Email support</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Cancel anytime</li>
+        </ul>
+        <a href="/login?action=register&plan=monthly" class="btn btn-secondary btn-block">Choose Monthly</a>
+      </div>
+
+      <!-- Quarterly - Best Value -->
+      <div class="pricing-card pricing-featured">
+        <div class="pricing-badge">Best Value</div>
+        <div class="pricing-header">
+          <h3>Quarterly</h3>
+          <div class="price">
+            <span class="amount">$12</span>
+            <span class="period">/quarter</span>
+          </div>
+          <div class="price-note">$4/month - Save 20%</div>
+        </div>
+        <ul class="pricing-features">
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Everything in Monthly</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Save $3 per quarter</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Priority support</li>
+          <li><span class="check"><span class="material-icons-round" style="font-size: 1rem;">check</span></span> Auto-renewing</li>
+        </ul>
+        <a href="/login?action=register&plan=quarterly" class="btn btn-primary btn-block">Choose Quarterly</a>
+      </div>
+    </section>
+
+    <section class="referral-section">
+      <div class="referral-card">
+        <div class="referral-icon">
+          <span class="material-icons-round" style="font-size: 3rem; color: var(--accent-cyan);">card_giftcard</span>
+        </div>
+        <h2>Loyalty Referral Program</h2>
+        <p>Share DNS Intel with friends and colleagues. When they sign up and subscribe, you get <strong>1 free month</strong> (50% off your subscription)!</p>
+        <div class="referral-details">
+          <div class="referral-step">
+            <span class="step-num">1</span>
+            <span>Get your unique referral code</span>
+          </div>
+          <div class="referral-step">
+            <span class="step-num">2</span>
+            <span>Share with friends</span>
+          </div>
+          <div class="referral-step">
+            <span class="step-num">3</span>
+            <span>They subscribe to a paid plan</span>
+          </div>
+          <div class="referral-step">
+            <span class="step-num">4</span>
+            <span>You get 1 free month!</span>
+          </div>
+        </div>
+        <div class="referral-max-benefit">
+          <p><strong>Stack up to 4 referrals</strong> = 4 quarterly subs at 50% off = <strong>1 full year at 50% off!</strong></p>
+        </div>
+        <a href="/login" class="btn btn-secondary">Get Your Referral Code</a>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>How does the free trial work?</h4>
+          <p>Sign up with just an email address or OAuth. You get 30 days of unlimited API access. No credit card required upfront.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I change plans later?</h4>
+          <p>Yes! You can upgrade or downgrade at any time. Changes take effect on your next billing cycle.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What payment methods do you accept?</h4>
+          <p>We accept all major credit cards through Stripe. Your payment information is never stored on our servers.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is there a free tier after the trial?</h4>
+          <p>Yes! Without a subscription, you can still make 3 free API requests per 24 hours.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How do loyalty referral credits work?</h4>
+          <p>When someone uses your referral code and subscribes, your subscription is extended by 1 month. You can stack up to 4 referrals for a full year at 50% off!</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I cancel anytime?</h4>
+          <p>Absolutely. Cancel anytime from your dashboard. You'll keep access until the end of your billing period.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 DNS Intel. Built for IT professionals who need fast, reliable DNS intelligence.</p>
+    <p style="margin-top: 0.5rem;">
+      <a href="/">Home</a> &bull;
+      <a href="/docs">API Docs</a> &bull;
+      <a href="/terms">Terms</a> &bull;
+      <a href="/privacy">Privacy</a> &bull;
+      <a href="/contact">Contact</a>
+    </p>
+  </footer>
+
+  <!-- Auth Check - Redirect logged-in users to dashboard -->
+  <script>
+    (async function checkAuth() {
+      try {
+        const response = await fetch('/auth/me', { credentials: 'include' });
+        if (response.ok) {
+          // User is logged in - redirect to dashboard
+          window.location.href = '/dashboard';
+        }
+      } catch (error) {
+        // Not authenticated, stay on pricing page
+      }
+    })();
+  </script>
+
+  <!-- Particle Animation Script -->
+  <script>
+    const canvas = document.getElementById('nerve-system');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    const particleCount = 60;
+    const connectionDistance = 150;
+    const particleSpeed = 0.5;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * particleSpeed;
+        this.vy = (Math.random() - 0.5) * particleSpeed;
+        this.size = Math.random() * 2 + 1;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+      }
+
+      draw() {
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.5)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      const lineColor = 'rgba(56, 189, 248, ';
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < connectionDistance) {
+            ctx.beginPath();
+            const opacity = 1 - distance / connectionDistance;
+            ctx.strokeStyle = lineColor + (opacity * 0.15) + ')';
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+      init();
+    });
+
+    resize();
+    init();
+    animate();
+  </script>
+</body>
+</html>

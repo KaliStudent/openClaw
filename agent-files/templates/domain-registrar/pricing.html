@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Void Domains</title>
+  <link rel="stylesheet" href="../../entropic-css/brutal-asphalt.css" id="theme-stylesheet" />
+  <style>
+    .check { color: #4ade80; margin-right: 6px; }
+    .cross { color: var(--muted); margin-right: 6px; }
+    .pricing-card { padding:40px 32px; border:1px solid var(--hairline,var(--border)); display:flex; flex-direction:column; gap:24px; position:relative; transition:border-color var(--transition); }
+    .pricing-card:hover { border-color:var(--fore,var(--primary)); }
+    .pricing-card.featured { border-color:var(--fore,var(--primary)); }
+    .pricing-card.featured::after { content:'BEST VALUE'; position:absolute; top:0; right:0; font-size:9px; font-weight:800; letter-spacing:.12em; color:var(--void,#0d0f12); background:var(--fore,var(--lumen)); padding:5px 12px; }
+    .tld-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .tld-table th { padding:10px 16px; text-align:left; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--hairline,var(--border)); }
+    .tld-table td { padding:12px 16px; border-bottom:1px solid var(--border2,rgba(58,64,74,0.4)); color:var(--text); }
+    .tld-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .tld-table .ext { font-family:var(--display-font); font-weight:800; color:var(--lumen,var(--text)); }
+  </style>
+</head>
+<body>
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle,var(--orb1) 0%,transparent 70%);filter:blur(60px);top:-5%;right:5%;border-radius:50%;"></div>
+  <div class="noise"></div>
+  <div class="entropic-grid" style="position:absolute;inset:0;"></div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">VOID<span style="color:var(--muted);">.DOMAINS</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Search</a></li>
+    <li><a href="pricing.html" class="active">Pricing</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="#" class="btn btn-primary" style="font-size:11px;padding:7px 16px;">Sign In</a>
+</nav>
+
+<main style="position:relative;z-index:10;">
+
+  <!-- Plans -->
+  <div class="section" style="max-width:1000px;">
+    <div style="text-align:center;margin-bottom:56px;">
+      <p class="section-eyebrow" style="justify-content:center;">Plans</p>
+      <h1 class="section-title" style="text-align:center;">Honest pricing.<br>No surprises.</h1>
+      <p class="section-sub" style="margin:0 auto;text-align:center;">Every plan includes WHOIS privacy, anycast DNS, auto-renew, and our 99.9% uptime SLA.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;">
+      <div class="pricing-card glass">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">DOMAIN ONLY</div>
+          <div style="font-family:var(--display-font);font-size:48px;font-weight:900;color:var(--lumen,var(--text));line-height:1;">$9<span style="font-size:18px;font-weight:400;color:var(--muted)">/yr</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Starting from — price varies by TLD</div>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Domain registration</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>WHOIS privacy</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>DNS management</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Auto-renew</li>
+          <li style="font-size:12px;color:var(--muted);"><span class="cross">—</span>Site template</li>
+          <li style="font-size:12px;color:var(--muted);"><span class="cross">—</span>Hosting</li>
+        </ul>
+        <a href="index.html" class="btn" style="width:100%;text-align:center;">Search Domains</a>
+      </div>
+
+      <div class="pricing-card glass featured">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fore,var(--primary));margin-bottom:8px;">LAUNCH</div>
+          <div style="font-family:var(--display-font);font-size:48px;font-weight:900;color:var(--lumen,var(--text));line-height:1;">$49<span style="font-size:18px;font-weight:400;color:var(--muted)"> one-time</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">+ domain registration fee</div>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Everything in Domain Only</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>1 premium site template</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>AI setup assistant</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>1 year CDN hosting</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Custom email address</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>SSL certificate</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width:100%;text-align:center;">Get Started</a>
+      </div>
+
+      <div class="pricing-card glass">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">PRO</div>
+          <div style="font-family:var(--display-font);font-size:48px;font-weight:900;color:var(--lumen,var(--text));line-height:1;">$99<span style="font-size:18px;font-weight:400;color:var(--muted)"> one-time</span></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">+ domain registration fee</div>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Everything in Launch</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>All 7 site template types</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Ecommerce + Stripe/PayPal</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>2 years CDN hosting</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Priority AI support</li>
+          <li style="font-size:12px;color:var(--text-dim);"><span class="check">✓</span>Export site files</li>
+        </ul>
+        <a href="#" class="btn" style="width:100%;text-align:center;">Go Pro</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TLD pricing table -->
+  <div class="section" style="max-width:1000px;">
+    <div style="margin-bottom:32px;">
+      <p class="section-eyebrow">Extensions</p>
+      <h2 class="section-title" style="font-size:clamp(22px,3vw,36px);">TLD Pricing</h2>
+      <p class="section-sub">Registration and renewal prices. All prices in USD, per year.</p>
+    </div>
+    <div class="glass" style="overflow:hidden;">
+      <table class="tld-table">
+        <thead>
+          <tr>
+            <th>Extension</th>
+            <th>Registration</th>
+            <th>Renewal</th>
+            <th>Transfer</th>
+            <th>WHOIS Privacy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="ext">.com</td><td>$12.00</td><td>$12.00</td><td>$12.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.net</td><td>$14.00</td><td>$14.00</td><td>$14.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.org</td><td>$12.00</td><td>$12.00</td><td>$12.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.io</td><td>$39.00</td><td>$39.00</td><td>$39.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.ai</td><td>$69.00</td><td>$69.00</td><td>$69.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.dev</td><td>$14.00</td><td>$14.00</td><td>$14.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.app</td><td>$18.00</td><td>$18.00</td><td>$18.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.co</td><td>$28.00</td><td>$28.00</td><td>$28.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.tech</td><td>$44.00</td><td>$44.00</td><td>$44.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.store</td><td>$32.00</td><td>$32.00</td><td>$32.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.studio</td><td>$22.00</td><td>$22.00</td><td>$22.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.lol</td><td>$18.00</td><td>$18.00</td><td>$18.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.xyz</td><td>$9.00</td><td>$12.00</td><td>$12.00</td><td style="color:#4ade80">Free</td></tr>
+          <tr><td class="ext">.me</td><td>$14.00</td><td>$18.00</td><td>$18.00</td><td style="color:#4ade80">Free</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px;">All prices include WHOIS privacy, anycast DNS, and ICANN fee. Renewal prices may differ from registration prices for select TLDs.</p>
+  </div>
+
+  <!-- FAQ teaser -->
+  <div class="section" style="max-width:1000px;padding-bottom:80px;">
+    <div class="glass" style="padding:40px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div>
+        <h3 style="font-size:18px;margin-bottom:8px;color:var(--lumen,var(--text));">Questions about pricing?</h3>
+        <p style="font-size:13px;max-width:400px;">See our FAQ for details on billing, refunds, and how our site launch service works.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="faq.html" class="btn">Read FAQ</a>
+        <a href="contact.html" class="btn btn-ghost">Contact Us</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer" style="position:relative;z-index:10;">
+  <div style="max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <span>© 2026 Void Domains</span>
+    <div style="display:flex;gap:20px;">
+      <a href="privacy.html" style="font-size:11px;color:var(--muted);">Privacy</a>
+      <a href="terms.html" style="font-size:11px;color:var(--muted);">Terms</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

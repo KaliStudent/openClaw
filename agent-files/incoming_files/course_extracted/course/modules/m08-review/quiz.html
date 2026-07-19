@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Quiz — Reading the Digital World</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <style>
+    .quiz-wrapper { max-width: 720px; margin: 0 auto; }
+    .final-q { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+    .final-q p { font-weight: 600; margin-bottom: .75rem; font-size: 1rem; }
+    .final-q label { display: block; padding: .5rem .75rem; margin: .3rem 0; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: background .15s; }
+    .final-q label:hover { background: #f0f9ff; }
+    .final-q label.correct { background: #dcfce7; border-color: #16a34a; }
+    .final-q label.wrong { background: #fee2e2; border-color: #dc2626; }
+    .final-feedback { font-size: .9rem; margin-top: .5rem; font-weight: 600; padding: .4rem .6rem; border-radius: 6px; display:none; }
+    .final-feedback.show { display:block; }
+    .final-feedback.pass { background:#dcfce7; color:#166534; }
+    .final-feedback.fail { background:#fee2e2; color:#991b1b; }
+    .quiz-submit { display: block; margin: 1.5rem auto; padding: .85rem 2.5rem; font-size: 1.05rem; background: #2563eb; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; }
+    .quiz-submit:hover { background: #1d4ed8; }
+    .result-banner { display:none; text-align:center; padding:1.5rem; border-radius:14px; margin:1.5rem 0; font-size:1.1rem; font-weight:700; }
+    .result-banner.show { display:block; }
+    .result-banner.pass { background:#dcfce7; color:#166534; border:2px solid #16a34a; }
+    .result-banner.fail { background:#fef9c3; color:#854d0e; border:2px solid #f59e0b; }
+    .certificate-section { display:none; text-align:center; background:#f0f9ff; border:2px solid #3b82f6; border-radius:14px; padding:2rem; margin:1.5rem 0; }
+    .certificate-section.show { display:block; }
+    .cert-title { font-size:1.8rem; font-weight:800; color:#1e3a5f; margin-bottom:.5rem; }
+    .cert-name { font-size:1.3rem; color:#2563eb; margin:.75rem 0; }
+    .cert-date { color:#64748b; font-size:.9rem; }
+  </style>
+</head>
+<body data-lesson-id="m08-quiz">
+<div id="course-nav"></div>
+<main class="lesson-main">
+  <nav class="breadcrumb">
+    <a href="../../index.html">Home</a> &rsaquo;
+    <a href="#">Module 8: Review</a> &rsaquo;
+    <span>Final Quiz</span>
+  </nav>
+
+  <header class="lesson-header">
+    <span class="module-badge" style="background:#0f172a;color:#fff;">Final Quiz</span>
+    <h1>Reading the Digital World — Final Quiz</h1>
+    <div class="lesson-meta">
+      <span>⏱ 10–15 minutes</span>
+      <span>15 Questions</span>
+      <span>Pass: 80% or higher</span>
+    </div>
+  </header>
+
+  <div class="objectives-box">
+    <p>You have made it to the final quiz — well done for completing the course! Answer all 15 questions, then tap <strong>Submit Quiz</strong> at the bottom. You can retake it as many times as you like. A passing score is 12 out of 15 (80%).</p>
+  </div>
+
+  <div class="quiz-wrapper">
+
+    <div class="final-q" id="fq1">
+      <p>1. On almost every website, what does the three-line stacked icon (☰) represent?</p>
+      <label><input type="radio" name="fq1" value="a"> The settings page</label>
+      <label><input type="radio" name="fq1" value="b"> A hidden navigation menu</label>
+      <label><input type="radio" name="fq1" value="c"> A search box</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! The ☰ hamburger icon opens a hidden navigation menu."></div>
+    </div>
+
+    <div class="final-q" id="fq2">
+      <p>2. What does clicking the magnifying glass icon (🔍) on a website do?</p>
+      <label><input type="radio" name="fq2" value="a"> Zooms in on the page</label>
+      <label><input type="radio" name="fq2" value="b"> Refreshes the page</label>
+      <label><input type="radio" name="fq2" value="c"> Opens the search function</label>
+      <div class="final-feedback" data-correct="c" data-msg="Correct! The magnifying glass always opens search."></div>
+    </div>
+
+    <div class="final-q" id="fq3">
+      <p>3. On Facebook, when you tap the speech bubble icon beneath a post, what happens?</p>
+      <label><input type="radio" name="fq3" value="a"> The post is deleted</label>
+      <label><input type="radio" name="fq3" value="b"> The post is shared to your timeline</label>
+      <label><input type="radio" name="fq3" value="c"> The comment section opens</label>
+      <div class="final-feedback" data-correct="c" data-msg="Correct! The speech bubble opens comments on a post."></div>
+    </div>
+
+    <div class="final-q" id="fq4">
+      <p>4. On Instagram, tapping the paper-plane icon (✈) inside a post lets you:</p>
+      <label><input type="radio" name="fq4" value="a"> Send the post as a direct message</label>
+      <label><input type="radio" name="fq4" value="b"> Enable airplane mode</label>
+      <label><input type="radio" name="fq4" value="c"> Add the post to your Story</label>
+      <div class="final-feedback" data-correct="a" data-msg="Correct! The paper-plane icon sends the post as a Direct Message."></div>
+    </div>
+
+    <div class="final-q" id="fq5">
+      <p>5. On X (Twitter), what does the two-arrows "repost" icon (🔁) do?</p>
+      <label><input type="radio" name="fq5" value="a"> Deletes your post</label>
+      <label><input type="radio" name="fq5" value="b"> Shares someone else's post with your followers</label>
+      <label><input type="radio" name="fq5" value="c"> Edits your original post</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! Reposting shares another person's post with your followers."></div>
+    </div>
+
+    <div class="final-q" id="fq6">
+      <p>6. On Reddit, what does clicking the upward arrow (⬆) on a post indicate?</p>
+      <label><input type="radio" name="fq6" value="a"> You want to report the post</label>
+      <label><input type="radio" name="fq6" value="b"> You found the post valuable or interesting</label>
+      <label><input type="radio" name="fq6" value="c"> You want to share it on another platform</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! An upvote on Reddit signals that a post is valuable."></div>
+    </div>
+
+    <div class="final-q" id="fq7">
+      <p>7. Inside the Google Search bar, the microphone icon (🎙) lets you:</p>
+      <label><input type="radio" name="fq7" value="a"> Listen to music while searching</label>
+      <label><input type="radio" name="fq7" value="b"> Speak your search query out loud instead of typing</label>
+      <label><input type="radio" name="fq7" value="c"> Call a contact from your address book</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! The microphone enables voice search."></div>
+    </div>
+
+    <div class="final-q" id="fq8">
+      <p>8. A search result on Google shows the word "Sponsored" beside the title. This means:</p>
+      <label><input type="radio" name="fq8" value="a"> It is the most trusted and accurate result</label>
+      <label><input type="radio" name="fq8" value="b"> A company paid Google to display it at the top</label>
+      <label><input type="radio" name="fq8" value="c"> It was recommended by your friends</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! 'Sponsored' always means a paid advertisement."></div>
+    </div>
+
+    <div class="final-q" id="fq9">
+      <p>9. You notice a small orange dot in the upper-right corner of your iPhone screen. What does it mean?</p>
+      <label><input type="radio" name="fq9" value="a"> Your battery is almost dead</label>
+      <label><input type="radio" name="fq9" value="b"> An app is currently using your microphone</label>
+      <label><input type="radio" name="fq9" value="c"> Airplane mode is turned on</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! The orange dot is Apple's microphone-in-use privacy indicator."></div>
+    </div>
+
+    <div class="final-q" id="fq10">
+      <p>10. On an iPhone, the battery icon turns yellow. What does this mean?</p>
+      <label><input type="radio" name="fq10" value="a"> The phone is fully charged</label>
+      <label><input type="radio" name="fq10" value="b"> The Wi-Fi has been disconnected</label>
+      <label><input type="radio" name="fq10" value="c"> Low Power Mode is active to conserve battery</label>
+      <div class="final-feedback" data-correct="c" data-msg="Correct! Yellow battery = Low Power Mode is on."></div>
+    </div>
+
+    <div class="final-q" id="fq11">
+      <p>11. On an iPhone without a Home button, how do you open the Control Center?</p>
+      <label><input type="radio" name="fq11" value="a"> Swipe down from the top-right corner</label>
+      <label><input type="radio" name="fq11" value="b"> Press the volume up button twice</label>
+      <label><input type="radio" name="fq11" value="c"> Double-tap the lock screen</label>
+      <div class="final-feedback" data-correct="a" data-msg="Correct! Swipe down from the top-right corner to open Control Center."></div>
+    </div>
+
+    <div class="final-q" id="fq12">
+      <p>12. In the Messages app on an iPhone, what does a GREEN speech bubble around a message indicate?</p>
+      <label><input type="radio" name="fq12" value="a"> The message is an iMessage sent over the internet</label>
+      <label><input type="radio" name="fq12" value="b"> The message is a standard SMS sent over the cellular network</label>
+      <label><input type="radio" name="fq12" value="c"> The message has been flagged as spam</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! Green bubble = SMS (standard cellular text message)."></div>
+    </div>
+
+    <div class="final-q" id="fq13">
+      <p>13. On Android, where do you typically see small icons for apps with pending notifications?</p>
+      <label><input type="radio" name="fq13" value="a"> Bottom right corner of the screen</label>
+      <label><input type="radio" name="fq13" value="b"> Left side of the status bar at the top</label>
+      <label><input type="radio" name="fq13" value="c"> In the center of the home screen</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! Android shows app notification icons on the left of the status bar."></div>
+    </div>
+
+    <div class="final-q" id="fq14">
+      <p>14. In an AI chat tool like Claude or ChatGPT, what does the clipboard/copy icon (📋) do?</p>
+      <label><input type="radio" name="fq14" value="a"> Clears the conversation history</label>
+      <label><input type="radio" name="fq14" value="b"> Copies the AI's response text so you can paste it elsewhere</label>
+      <label><input type="radio" name="fq14" value="c"> Sends the conversation to your email</label>
+      <div class="final-feedback" data-correct="b" data-msg="Correct! The copy icon copies the AI's response to your clipboard."></div>
+    </div>
+
+    <div class="final-q" id="fq15">
+      <p>15. In any app or website, what do three small dots (⋮ or ⋯) typically represent?</p>
+      <label><input type="radio" name="fq15" value="a"> Loading — wait for the page to finish</label>
+      <label><input type="radio" name="fq15" value="b"> A broken or missing icon</label>
+      <label><input type="radio" name="fq15" value="c"> A "More Options" overflow menu</label>
+      <div class="final-feedback" data-correct="c" data-msg="Correct! Three dots always mean more options are hidden behind that button."></div>
+    </div>
+
+    <button class="quiz-submit" onclick="submitFinalQuiz()">Submit Quiz</button>
+
+    <div class="result-banner" id="result-banner"></div>
+
+    <div class="certificate-section" id="cert-section">
+      <div class="cert-title">🎓 Certificate of Completion</div>
+      <p>This certifies that</p>
+      <div class="cert-name" id="cert-name">You</div>
+      <p>has successfully completed</p>
+      <p><strong>Reading the Digital World: Understanding Icons &amp; Symbols Online</strong></p>
+      <div class="cert-date" id="cert-date"></div>
+      <p style="margin-top:1rem;font-size:.9rem;color:#475569;">Print this page or take a screenshot to save your certificate.</p>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <a class="btn-prev" href="lesson-01.html">← Back to Cheat Sheet</a>
+    <a class="btn-next" href="../../index.html">↩ Back to Course Home</a>
+  </div>
+</main>
+
+<script src="../../js/nav.js"></script>
+<script src="../../js/course.js"></script>
+<script>buildNav('../../');</script>
+<script>
+function submitFinalQuiz() {
+  const answers = { fq1:'b', fq2:'c', fq3:'c', fq4:'a', fq5:'b', fq6:'b', fq7:'b', fq8:'b', fq9:'b', fq10:'c', fq11:'a', fq12:'b', fq13:'b', fq14:'b', fq15:'c' };
+  let score = 0;
+  const total = Object.keys(answers).length;
+
+  Object.entries(answers).forEach(([qid, correct]) => {
+    const selected = document.querySelector(`input[name="${qid}"]:checked`);
+    const fb = document.querySelector(`#${qid} .final-feedback`);
+    const labels = document.querySelectorAll(`#${qid} label`);
+
+    labels.forEach(l => { l.classList.remove('correct','wrong'); });
+
+    if (selected) {
+      const parentLabel = selected.closest('label');
+      if (selected.value === correct) {
+        score++;
+        parentLabel.classList.add('correct');
+      } else {
+        parentLabel.classList.add('wrong');
+        document.querySelector(`#${qid} input[value="${correct}"]`).closest('label').classList.add('correct');
+      }
+    } else {
+      document.querySelector(`#${qid} input[value="${correct}"]`).closest('label').classList.add('correct');
+    }
+
+    if (fb) {
+      fb.textContent = fb.dataset.msg || '';
+      fb.classList.add('show', selected && selected.value === correct ? 'pass' : 'fail');
+    }
+  });
+
+  const pct = Math.round((score / total) * 100);
+  const banner = document.getElementById('result-banner');
+  banner.classList.add('show');
+
+  if (pct >= 80) {
+    banner.classList.add('pass');
+    banner.innerHTML = `🎉 You passed! Score: ${score} / ${total} (${pct}%) — Excellent work!`;
+    const cert = document.getElementById('cert-section');
+    cert.classList.add('show');
+    document.getElementById('cert-date').textContent = 'Completed: ' + new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    markComplete('m08-quiz');
+  } else {
+    banner.classList.add('fail');
+    banner.innerHTML = `Score: ${score} / ${total} (${pct}%). You need 80% to pass. Review the lessons and try again — you are almost there!`;
+  }
+
+  document.querySelector('.quiz-submit').textContent = 'Retake Quiz';
+  window.scrollTo({ top: banner.offsetTop - 80, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TOTP — 2FA Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:        #050810;
+  --surface:   #0a0f1e;
+  --surface2:  #0f1628;
+  --border:    rgba(0,136,255,0.15);
+  --border2:   rgba(0,136,255,0.08);
+  --primary:   #0088ff;
+  --primary-lt:#44aaff;
+  --primary-dk:#0055cc;
+  --dim:       rgba(255,255,255,0.25);
+  --muted:     rgba(255,255,255,0.12);
+  --text:      rgba(255,255,255,0.88);
+  --text-dim:  rgba(255,255,255,0.35);
+  --green:     #00e676;
+  --red:       #ff3d3d;
+  --yellow:    #ffdd00;
+  --font:      'JetBrains Mono', monospace;
+}
+
+html,body{ height:100%; background:var(--bg); color:var(--text); font-family:var(--font); }
+
+/* subtle grid */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,136,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,136,255,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:52px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.topbar-brand{
+  font-size:13px;font-weight:700;letter-spacing:0.08em;
+  color:var(--primary-lt);
+}
+.topbar-brand span{color:var(--text-dim);font-weight:400;}
+.topbar-right{display:flex;align-items:center;gap:20px;}
+.topbar-clock{font-size:12px;color:var(--text-dim);letter-spacing:0.06em;}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);
+}
+
+/* ── LAYOUT ── */
+.app{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:32px 20px 60px;
+  display:flex;flex-direction:column;gap:20px;
+}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:flex;flex-direction:column;gap:20px;}
+
+/* ── PIN SCREEN ── */
+.pin-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:28px;padding:48px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  max-width:380px;width:100%;margin:0 auto;
+}
+.pin-heading{font-size:15px;font-weight:600;color:var(--text);letter-spacing:0.04em;text-align:center;}
+.pin-sub{font-size:11px;color:var(--text-dim);text-align:center;line-height:1.6;letter-spacing:0.03em;}
+.pin-dots{display:flex;gap:10px;}
+.pin-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--border);
+  background:transparent;
+  transition:all 0.12s;
+}
+.pin-dot.filled{background:var(--primary);border-color:var(--primary);box-shadow:0 0 8px rgba(0,136,255,0.5);}
+.pin-dot.error{background:var(--red);border-color:var(--red);animation:shake 0.3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:220px;}
+.num-btn{
+  padding:16px;border-radius:6px;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  font-family:var(--font);font-size:16px;font-weight:600;
+  color:var(--text);cursor:pointer;
+  transition:all 0.1s;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.num-btn:hover{background:rgba(0,136,255,0.1);border-color:var(--border);}
+.num-btn:active{background:rgba(0,136,255,0.18);transform:scale(0.96);}
+.num-btn.del{color:var(--text-dim);font-size:13px;}
+.num-btn.zero{grid-column:2;}
+.pin-error{font-size:11px;color:var(--red);min-height:16px;text-align:center;letter-spacing:0.03em;}
+
+/* ── VAULT HEADER ── */
+.vault-header{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.vault-title{font-size:12px;font-weight:600;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;}
+.vault-count{
+  font-size:11px;color:var(--text-dim);
+  padding:3px 10px;
+  border:1px solid var(--border2);border-radius:20px;
+  background:var(--surface2);
+}
+.header-actions{display:flex;gap:8px;align-items:center;}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:6px;
+  font-family:var(--font);font-size:11px;font-weight:600;letter-spacing:0.06em;
+  cursor:pointer;transition:all 0.1s;border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text-dim);
+}
+.btn:hover{border-color:var(--border);color:var(--text);background:rgba(255,255,255,0.04);}
+.btn-primary{
+  background:rgba(0,136,255,0.12);
+  border-color:rgba(0,136,255,0.35);
+  color:var(--primary-lt);
+}
+.btn-primary:hover{background:rgba(0,136,255,0.2);border-color:var(--primary);}
+.btn-danger{border-color:rgba(255,61,61,0.25);color:rgba(255,61,61,0.6);}
+.btn-danger:hover{border-color:var(--red);color:var(--red);background:rgba(255,61,61,0.06);}
+.btn-sm{padding:5px 10px;font-size:10px;}
+
+/* ── ADD PANEL ── */
+.add-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;
+}
+.add-panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;border-bottom:1px solid var(--border2);
+}
+.add-panel-title{font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--text-dim);text-transform:uppercase;}
+.add-panel-body{
+  padding:18px;
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+@media(max-width:500px){.add-panel-body{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.full{grid-column:1/-1;}
+.field-label{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--text-dim);text-transform:uppercase;}
+.field-input{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:5px;
+  padding:9px 12px;font-family:var(--font);font-size:13px;
+  color:var(--text);outline:none;transition:border-color 0.15s;
+}
+.field-input:focus{border-color:rgba(0,136,255,0.4);box-shadow:0 0 0 2px rgba(0,136,255,0.08);}
+.field-input::placeholder{color:var(--muted);}
+.field-hint{font-size:10px;color:var(--text-dim);line-height:1.5;opacity:0.7;}
+.test-result{
+  font-size:20px;font-weight:700;letter-spacing:0.15em;
+  color:var(--text-dim);min-height:26px;
+  transition:color 0.2s;
+}
+.test-result.valid{color:var(--green);}
+.test-result.invalid{color:var(--red);}
+
+/* ── CODES GRID ── */
+.codes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:12px;
+}
+
+/* ── CODE CARD ── */
+.code-card{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;padding:18px;
+  cursor:pointer;
+  transition:border-color 0.15s,background 0.15s;
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.code-card:hover{border-color:rgba(0,136,255,0.3);background:rgba(0,136,255,0.03);}
+.code-card:active{background:rgba(0,136,255,0.07);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.card-site{font-size:13px;font-weight:600;color:var(--text);letter-spacing:0.02em;}
+.card-account{font-size:10px;color:var(--text-dim);margin-top:2px;letter-spacing:0.03em;}
+.card-del{
+  background:none;border:none;cursor:pointer;
+  font-size:12px;color:var(--muted);padding:2px 4px;border-radius:3px;
+  transition:color 0.1s;opacity:0;
+}
+.code-card:hover .card-del{opacity:1;}
+.card-del:hover{color:var(--red);}
+
+.card-code{
+  font-size:34px;font-weight:700;letter-spacing:0.2em;
+  color:var(--primary-lt);
+  margin-bottom:14px;line-height:1;
+  text-shadow:0 0 20px rgba(0,136,255,0.3);
+  transition:opacity 0.2s;
+  user-select:all;
+}
+.card-code.flash{animation:codeFlash 0.25s ease;}
+@keyframes codeFlash{0%{opacity:0.1}100%{opacity:1}}
+
+.card-footer{display:flex;align-items:center;gap:10px;}
+.progress-track{
+  flex:1;height:3px;border-radius:2px;
+  background:var(--border2);overflow:hidden;
+}
+.progress-bar{
+  height:100%;border-radius:2px;
+  background:var(--primary);
+  transition:width 1s linear, background 0.3s;
+  box-shadow:0 0 6px rgba(0,136,255,0.4);
+}
+.progress-bar.warn{background:var(--red);box-shadow:0 0 6px rgba(255,61,61,0.4);}
+.timer{
+  font-size:11px;font-weight:600;color:var(--text-dim);
+  letter-spacing:0.04em;white-space:nowrap;
+}
+.timer.warn{color:var(--red);}
+.copy-hint{font-size:10px;color:var(--muted);white-space:nowrap;}
+
+/* copy flash overlay */
+.copy-overlay{
+  position:absolute;inset:0;border-radius:8px;
+  background:rgba(0,136,255,0.08);
+  opacity:0;pointer-events:none;
+}
+.copy-overlay.flash{animation:overlayFlash 0.4s ease forwards;}
+@keyframes overlayFlash{0%{opacity:1}100%{opacity:0}}
+
+/* ── EMPTY STATE ── */
+.empty{
+  text-align:center;padding:56px 20px;
+  border:1px dashed var(--border2);border-radius:8px;
+  color:var(--text-dim);
+}
+.empty-icon{font-size:36px;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text-dim);}
+.empty-body{font-size:12px;line-height:1.7;color:var(--muted);}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--surface2);border:1px solid rgba(0,136,255,0.3);border-radius:6px;
+  padding:10px 20px;font-size:12px;font-weight:600;letter-spacing:0.06em;
+  color:var(--primary-lt);
+  box-shadow:0 8px 32px rgba(0,0,0,0.5),0 0 16px rgba(0,136,255,0.1);
+  z-index:1000;opacity:0;pointer-events:none;
+  transition:opacity 0.18s,transform 0.18s;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── LOCK FAB ── */
+.lock-fab{
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  width:42px;height:42px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  display:none;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  transition:all 0.1s;
+}
+.lock-fab:hover{border-color:rgba(0,136,255,0.4);background:rgba(0,136,255,0.1);}
+.lock-fab.visible{display:flex;}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border2);}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .codes-grid{grid-template-columns:1fr;}
+  .card-code{font-size:28px;}
+  .topbar{padding:0 16px;}
+  .app{padding:20px 14px 60px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">totp<span>/</span>vault</div>
+  <div class="topbar-right">
+    <div class="topbar-clock" id="clock">00:00:00</div>
+    <div class="status-dot" id="status-dot"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- LOCK FAB -->
+<div class="lock-fab" id="lock-fab" onclick="lockVault()">🔒</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- ── SCREEN: SETUP ── -->
+  <div class="screen active" id="screen-setup">
+    <div class="pin-wrap">
+      <div>
+        <div class="pin-heading">Create your vault PIN</div>
+        <div class="pin-sub" style="margin-top:8px;">Choose a 6-digit PIN to encrypt your TOTP secrets. Stored locally — never leaves your device.</div>
+      </div>
+      <div class="pin-dots" id="setup-dots">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-error" id="setup-error"></div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pinInput('setup','1')">1</button>
+        <button class="num-btn" onclick="pinInput('setup','2')">2</button>
+        <button class="num-btn" onclick="pinInput('setup','3')">3</button>
+        <button class="num-btn" onclick="pinInput('setup','4')">4</button>
+        <button class="num-btn" onclick="pinInput('setup','5')">5</button>
+        <button class="num-btn" onclick="pinInput('setup','6')">6</button>
+        <button class="num-btn" onclick="pinInput('setup','7')">7</button>
+        <button class="num-btn" onclick="pinInput('setup','8')">8</button>
+        <button class="num-btn" onclick="pinInput('setup','9')">9</button>
+        <button class="num-btn del" onclick="pinDel('setup')">⌫</button>
+        <button class="num-btn zero" onclick="pinInput('setup','0')">0</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: CONFIRM ── -->
+  <div class="screen" id="screen-confirm">
+    <div class="pin-wrap">
+      <div>
+        <div class="pin-heading">Confirm your PIN</div>
+        <div class="pin-sub" style="margin-top:8px;">Enter it again to confirm. There's no recovery — remember it.</div>
+      </div>
+      <div class="pin-dots" id="confirm-dots">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-error" id="confirm-error"></div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pinInput('confirm','1')">1</button>
+        <button class="num-btn" onclick="pinInput('confirm','2')">2</button>
+        <button class="num-btn" onclick="pinInput('confirm','3')">3</button>
+        <button class="num-btn" onclick="pinInput('confirm','4')">4</button>
+        <button class="num-btn" onclick="pinInput('confirm','5')">5</button>
+        <button class="num-btn" onclick="pinInput('confirm','6')">6</button>
+        <button class="num-btn" onclick="pinInput('confirm','7')">7</button>
+        <button class="num-btn" onclick="pinInput('confirm','8')">8</button>
+        <button class="num-btn" onclick="pinInput('confirm','9')">9</button>
+        <button class="num-btn del" onclick="pinDel('confirm')">⌫</button>
+        <button class="num-btn zero" onclick="pinInput('confirm','0')">0</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: UNLOCK ── -->
+  <div class="screen" id="screen-unlock">
+    <div class="pin-wrap">
+      <div>
+        <div class="pin-heading">Vault locked</div>
+        <div class="pin-sub" style="margin-top:8px;">Enter your 6-digit PIN to access your codes.</div>
+      </div>
+      <div class="pin-dots" id="unlock-dots">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-error" id="unlock-error"></div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pinInput('unlock','1')">1</button>
+        <button class="num-btn" onclick="pinInput('unlock','2')">2</button>
+        <button class="num-btn" onclick="pinInput('unlock','3')">3</button>
+        <button class="num-btn" onclick="pinInput('unlock','4')">4</button>
+        <button class="num-btn" onclick="pinInput('unlock','5')">5</button>
+        <button class="num-btn" onclick="pinInput('unlock','6')">6</button>
+        <button class="num-btn" onclick="pinInput('unlock','7')">7</button>
+        <button class="num-btn" onclick="pinInput('unlock','8')">8</button>
+        <button class="num-btn" onclick="pinInput('unlock','9')">9</button>
+        <button class="num-btn del" onclick="pinDel('unlock')">⌫</button>
+        <button class="num-btn zero" onclick="pinInput('unlock','0')">0</button>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="resetVault()">Reset vault</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN: VAULT ── -->
+  <div class="screen" id="screen-vault">
+
+    <div class="vault-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="vault-title">Authenticator</div>
+        <div class="vault-count" id="vault-count">0 entries</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="toggleAdd()">+ Add</button>
+        <button class="btn" onclick="lockVault()">Lock</button>
+      </div>
+    </div>
+
+    <!-- Add panel -->
+    <div class="add-panel" id="add-panel" style="display:none;">
+      <div class="add-panel-header">
+        <div class="add-panel-title">New entry</div>
+        <button class="btn btn-sm" onclick="toggleAdd()">Cancel</button>
+      </div>
+      <div class="add-panel-body">
+        <div class="field">
+          <div class="field-label">Service / Site</div>
+          <input class="field-input" type="text" id="add-site" placeholder="e.g. GitHub"/>
+        </div>
+        <div class="field">
+          <div class="field-label">Account</div>
+          <input class="field-input" type="text" id="add-account" placeholder="e.g. you@email.com"/>
+        </div>
+        <div class="field full">
+          <div class="field-label">TOTP Secret Key</div>
+          <input class="field-input" type="text" id="add-secret"
+            placeholder="e.g. JBSWY3DPEHPK3PXP"
+            autocomplete="off" autocorrect="off"
+            autocapitalize="characters" spellcheck="false"/>
+          <div class="field-hint">Base32 secret from the site's 2FA setup page. Choose "enter manually" or "can't scan QR" when setting up 2FA.</div>
+        </div>
+        <div class="field full" style="flex-direction:row;gap:10px;align-items:center;">
+          <button class="btn btn-primary" onclick="addEntry()" style="flex:1;">Add to vault</button>
+          <button class="btn" onclick="testSecret()" style="flex:1;">Test secret</button>
+        </div>
+        <div class="field full">
+          <div class="field-label">Test result</div>
+          <div class="test-result" id="test-result">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="codes-grid" id="codes-grid"></div>
+    <div class="empty" id="empty-state" style="display:none;">
+      <div class="empty-icon">🔑</div>
+      <div class="empty-title">No entries yet</div>
+      <div class="empty-body">
+        Add your first account using the button above.<br/>
+        You'll need the TOTP secret key — look for<br/>"enter key manually" when setting up 2FA on any site.
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app -->
+
+<script>
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let pinBuf   = {setup:'',confirm:'',unlock:''};
+let setupPin = '';
+let sessionPin = '';
+let entries  = [];
+let ticker   = null;
+
+/* ══════════════════════════════
+   CLOCK
+══════════════════════════════ */
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clock').textContent=
+    [n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+},1000);
+
+/* ══════════════════════════════
+   SCREENS
+══════════════════════════════ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
+function init(){
+  if(localStorage.getItem('tv1_hash')) show('unlock');
+  else show('setup');
+}
+
+/* ══════════════════════════════
+   PIN INPUT
+══════════════════════════════ */
+function pinInput(ctx,d){
+  if(pinBuf[ctx].length>=6) return;
+  pinBuf[ctx]+=d;
+  renderDots(ctx);
+  if(pinBuf[ctx].length===6) setTimeout(()=>pinDone(ctx),100);
+}
+function pinDel(ctx){
+  pinBuf[ctx]=pinBuf[ctx].slice(0,-1);
+  renderDots(ctx);
+  document.getElementById(ctx+'-error').textContent='';
+}
+function renderDots(ctx){
+  document.querySelectorAll('#'+ctx+'-dots .pin-dot').forEach((d,i)=>{
+    d.classList.toggle('filled',i<pinBuf[ctx].length);
+    d.classList.remove('error');
+  });
+}
+function dotErr(ctx,msg){
+  document.getElementById(ctx+'-error').textContent=msg;
+  document.querySelectorAll('#'+ctx+'-dots .pin-dot').forEach(d=>{
+    d.classList.remove('filled');d.classList.add('error');
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('#'+ctx+'-dots .pin-dot').forEach(d=>d.classList.remove('error'));
+    pinBuf[ctx]='';renderDots(ctx);
+  },600);
+}
+
+/* ══════════════════════════════
+   PIN COMPLETE
+══════════════════════════════ */
+async function pinDone(ctx){
+  if(ctx==='setup'){
+    setupPin=pinBuf.setup; pinBuf.setup=''; renderDots('setup');
+    show('confirm');
+  }
+  else if(ctx==='confirm'){
+    if(pinBuf.confirm!==setupPin){
+      dotErr('confirm','PINs do not match');
+      setupPin='';
+      setTimeout(()=>show('setup'),700);
+    } else {
+      sessionPin=pinBuf.confirm;
+      const h=await hashPin(sessionPin);
+      localStorage.setItem('tv1_hash',h);
+      const p=sessionPin; pinBuf.confirm=''; setupPin='';
+      await openVault(p);
+    }
+  }
+  else if(ctx==='unlock'){
+    const h=await hashPin(pinBuf.unlock);
+    if(h===localStorage.getItem('tv1_hash')){
+      sessionPin=pinBuf.unlock;
+      const p=sessionPin; pinBuf.unlock='';
+      await openVault(p);
+    } else {
+      dotErr('unlock','Incorrect PIN');
+    }
+  }
+}
+
+/* ══════════════════════════════
+   VAULT OPEN / LOCK
+══════════════════════════════ */
+async function openVault(pin){
+  const raw=localStorage.getItem('tv1_data');
+  entries=raw?JSON.parse(await decrypt(raw,pin)):[];
+  show('vault');
+  document.getElementById('lock-fab').classList.add('visible');
+  render();
+  startTicker();
+}
+
+function lockVault(){
+  entries=[]; sessionPin='';
+  if(ticker){clearInterval(ticker);ticker=null;}
+  document.getElementById('lock-fab').classList.remove('visible');
+  document.getElementById('add-panel').style.display='none';
+  pinBuf.unlock=''; renderDots('unlock');
+  document.getElementById('unlock-error').textContent='';
+  show('unlock');
+  toast('Vault locked');
+}
+
+async function save(){
+  if(!sessionPin) return;
+  localStorage.setItem('tv1_data',await encrypt(JSON.stringify(entries),sessionPin));
+}
+
+/* ══════════════════════════════
+   RENDER CARDS
+══════════════════════════════ */
+function render(){
+  const grid=document.getElementById('codes-grid');
+  const empty=document.getElementById('empty-state');
+  const count=document.getElementById('vault-count');
+  grid.innerHTML='';
+  count.textContent=entries.length+' entr'+(entries.length===1?'y':'ies');
+  if(!entries.length){empty.style.display='block';return;}
+  empty.style.display='none';
+  entries.forEach((e,i)=>{
+    const code=totp(e.secret);
+    const card=document.createElement('div');
+    card.className='code-card';
+    card.dataset.idx=i;
+    card.onclick=()=>copyCode(i,card);
+    card.innerHTML=`
+      <div class="copy-overlay" id="co-${i}"></div>
+      <div class="card-top">
+        <div>
+          <div class="card-site">${esc(e.site)}</div>
+          ${e.account?`<div class="card-account">${esc(e.account)}</div>`:''}
+        </div>
+        <button class="card-del" onclick="event.stopPropagation();delEntry(${i})" title="Delete">✕</button>
+      </div>
+      <div class="card-code" id="cc-${i}">${fmt(code)}</div>
+      <div class="card-footer">
+        <div class="progress-track"><div class="progress-bar" id="pb-${i}" style="width:100%"></div></div>
+        <div class="timer" id="tm-${i}">30s</div>
+        <div class="copy-hint">click to copy</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  tick();
+}
+
+/* ── Live ticker ── */
+function startTicker(){
+  if(ticker) clearInterval(ticker);
+  ticker=setInterval(tick,1000);
+}
+function tick(){
+  const now=Math.floor(Date.now()/1000);
+  const rem=30-(now%30);
+  const pct=(rem/30)*100;
+  const warn=rem<=7;
+  entries.forEach((e,i)=>{
+    const cc=document.getElementById('cc-'+i);
+    const pb=document.getElementById('pb-'+i);
+    const tm=document.getElementById('tm-'+i);
+    if(!cc) return;
+    const code=totp(e.secret);
+    if(cc.textContent.replace(/\s/g,'')!==code){
+      cc.classList.add('flash');
+      setTimeout(()=>cc.classList.remove('flash'),300);
+    }
+    cc.textContent=fmt(code);
+    if(pb){pb.style.width=pct+'%';pb.classList.toggle('warn',warn);}
+    if(tm){tm.textContent=rem+'s';tm.classList.toggle('warn',warn);}
+  });
+}
+
+/* ── Copy ── */
+function copyCode(i,card){
+  const code=totp(entries[i].secret);
+  const write=()=>{
+    const el=document.createElement('textarea');
+    el.value=code;el.style.cssText='position:fixed;opacity:0;';
+    document.body.appendChild(el);el.select();
+    document.execCommand('copy');document.body.removeChild(el);
+  };
+  if(navigator.clipboard) navigator.clipboard.writeText(code).catch(write);
+  else write();
+  toast('Copied  '+fmt(code));
+  const ov=document.getElementById('co-'+i);
+  if(ov){ov.classList.remove('flash');void ov.offsetWidth;ov.classList.add('flash');}
+}
+
+/* ── Add ── */
+function toggleAdd(){
+  const p=document.getElementById('add-panel');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  if(open){
+    document.getElementById('add-site').focus();
+    document.getElementById('test-result').textContent='—';
+    document.getElementById('test-result').className='test-result';
+  }
+}
+function testSecret(){
+  const s=document.getElementById('add-secret').value.trim().replace(/\s/g,'').toUpperCase();
+  const el=document.getElementById('test-result');
+  if(!s){el.textContent='Enter a secret first';el.className='test-result invalid';return;}
+  try{
+    const code=totp(s);
+    el.textContent=fmt(code)+'  ✓';el.className='test-result valid';
+  }catch(e){el.textContent='Invalid secret key';el.className='test-result invalid';}
+}
+async function addEntry(){
+  const site=document.getElementById('add-site').value.trim();
+  const acct=document.getElementById('add-account').value.trim();
+  const sec=document.getElementById('add-secret').value.trim().replace(/\s/g,'').toUpperCase();
+  if(!site){toast('Enter a service name');return;}
+  if(!sec){toast('Enter a secret key');return;}
+  try{totp(sec);}catch(e){toast('Invalid secret key');return;}
+  entries.push({site,account:acct,secret:sec});
+  await save();
+  render();startTicker();
+  toggleAdd();
+  ['add-site','add-account','add-secret'].forEach(id=>document.getElementById(id).value='');
+  toast('Added '+site);
+}
+async function delEntry(i){
+  if(!confirm('Remove '+entries[i].site+' from vault?')) return;
+  const name=entries[i].site;
+  entries.splice(i,1);
+  await save();
+  render();startTicker();
+  toast('Removed '+name);
+}
+
+/* ══════════════════════════════
+   RESET
+══════════════════════════════ */
+function resetVault(){
+  if(!confirm('Delete all secrets and reset vault?\n\nThis cannot be undone.')) return;
+  localStorage.removeItem('tv1_hash');
+  localStorage.removeItem('tv1_data');
+  entries=[];sessionPin='';
+  if(ticker){clearInterval(ticker);ticker=null;}
+  pinBuf={setup:'',confirm:'',unlock:''};
+  ['setup','confirm','unlock'].forEach(c=>renderDots(c));
+  show('setup');toast('Vault reset');
+}
+
+/* ══════════════════════════════
+   TOAST
+══════════════════════════════ */
+let _tt;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+/* ══════════════════════════════
+   KEYBOARD
+══════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  const ctx=document.querySelector('.screen.active')?.id?.replace('screen-','');
+  if(['setup','confirm','unlock'].includes(ctx)){
+    if(e.key>='0'&&e.key<='9') pinInput(ctx,e.key);
+    if(e.key==='Backspace') pinDel(ctx);
+  }
+});
+
+/* ══════════════════════════════
+   TOTP — RFC 6238, pure JS
+══════════════════════════════ */
+function totp(secret,digits=6,period=30){
+  const key=b32(secret);
+  const t=Math.floor(Date.now()/1000/period);
+  const msg=new Uint8Array(8);
+  let n=t;
+  for(let i=7;i>=0;i--){msg[i]=n&0xff;n=Math.floor(n/256);}
+  const h=hmac(key,msg);
+  const o=h[h.length-1]&0xf;
+  const c=((h[o]&0x7f)<<24)|((h[o+1]&0xff)<<16)|((h[o+2]&0xff)<<8)|(h[o+3]&0xff);
+  return String(c%Math.pow(10,digits)).padStart(digits,'0');
+}
+function fmt(c){return c.slice(0,3)+' '+c.slice(3);}
+function b32(s){
+  const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const t=s.toUpperCase().replace(/=+$/,'');
+  let bits=0,val=0;const out=[];
+  for(const c of t){const i=A.indexOf(c);if(i<0)continue;val=(val<<5)|i;bits+=5;if(bits>=8){out.push((val>>>(bits-8))&0xff);bits-=8;}}
+  return new Uint8Array(out);
+}
+function hmac(key,msg){
+  const B=64;let k=key;
+  if(k.length>B)k=sha1(k);
+  if(k.length<B){const t=new Uint8Array(B);t.set(k);k=t;}
+  const ip=new Uint8Array(B),op=new Uint8Array(B);
+  for(let i=0;i<B;i++){ip[i]=k[i]^0x36;op[i]=k[i]^0x5c;}
+  return sha1(cat(op,sha1(cat(ip,msg))));
+}
+function sha1(d){
+  let h0=0x67452301,h1=0xEFCDAB89,h2=0x98BADCFE,h3=0x10325476,h4=0xC3D2E1F0;
+  const m=[...d],l=m.length*8;m.push(0x80);
+  while(m.length%64!==56)m.push(0);
+  for(let i=7;i>=0;i--)m.push((l/Math.pow(256,i))&0xff);
+  for(let i=0;i<m.length;i+=64){
+    const w=[];
+    for(let j=0;j<16;j++)w[j]=(m[i+j*4]<<24)|(m[i+j*4+1]<<16)|(m[i+j*4+2]<<8)|m[i+j*4+3];
+    for(let j=16;j<80;j++)w[j]=rl(w[j-3]^w[j-8]^w[j-14]^w[j-16],1);
+    let[a,b,c,dd,e]=[h0,h1,h2,h3,h4];
+    for(let j=0;j<80;j++){
+      let f,k;
+      if(j<20){f=(b&c)|(~b&dd);k=0x5A827999;}
+      else if(j<40){f=b^c^dd;k=0x6ED9EBA1;}
+      else if(j<60){f=(b&c)|(b&dd)|(c&dd);k=0x8F1BBCDC;}
+      else{f=b^c^dd;k=0xCA62C1D6;}
+      const t=(rl(a,5)+f+e+k+w[j])>>>0;
+      e=dd;dd=c;c=rl(b,30);b=a;a=t;
+    }
+    h0=(h0+a)>>>0;h1=(h1+b)>>>0;h2=(h2+c)>>>0;h3=(h3+dd)>>>0;h4=(h4+e)>>>0;
+  }
+  const r=new Uint8Array(20);
+  [h0,h1,h2,h3,h4].forEach((h,i)=>{r[i*4]=(h>>>24)&0xff;r[i*4+1]=(h>>>16)&0xff;r[i*4+2]=(h>>>8)&0xff;r[i*4+3]=h&0xff;});
+  return r;
+}
+function rl(n,b){return((n<<b)|(n>>>(32-b)))>>>0;}
+function cat(a,b){const r=new Uint8Array(a.length+b.length);r.set(a);r.set(b,a.length);return r;}
+
+/* ══════════════════════════════
+   CRYPTO — AES-256-GCM + PBKDF2
+══════════════════════════════ */
+async function hashPin(p){
+  const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('tv1:'+p));
+  return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function key(p){
+  const m=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt:new TextEncoder().encode('tv1_kdf'),iterations:100000,hash:'SHA-256'},
+    m,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encrypt(pt,p){
+  const k=await key(p),iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,new TextEncoder().encode(pt));
+  const b=new Uint8Array(12+ct.byteLength);b.set(iv);b.set(new Uint8Array(ct),12);
+  return btoa(String.fromCharCode(...b));
+}
+async function decrypt(b64,p){
+  const k=await key(p);
+  const b=new Uint8Array(atob(b64).split('').map(c=>c.charCodeAt(0)));
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12));
+  return new TextDecoder().decode(pt);
+}
+
+function esc(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+/* ── BOOT ── */
+init();
+</script>
+</body>
+</html>

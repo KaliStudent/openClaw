@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "signed_up_at": {
+      "type": "string"
+    }
+  },
+  "required": [],
+  "name": "EmailSignup"
+}

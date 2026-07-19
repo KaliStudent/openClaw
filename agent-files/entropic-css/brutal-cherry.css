@@ -1,0 +1,305 @@
+/* ============================================================
+   ENTROPIC UI — BRUTALIST GLASS x NEON CHERRY
+   File    : brutal-cherry.css
+   Version : 2.0  |  May 2026
+   System  : Entropic Design Language
+
+   USAGE
+   -----
+   1. <link rel="stylesheet" href="brutal-cherry.css"> in <head>
+   2. Add .theme-dark or .theme-light to <html> / <body>
+      Default (no class) = dark mode
+   3. Utility classes: .glass .btn .btn-ghost .badge
+      .grad-text .section .grid-2 .grid-3 .nav
+      .entropic-grid .orb .reveal (minimal only)
+   4. CSS custom properties available everywhere:
+      var(--primary) var(--bg) var(--glass-bg) etc.
+
+   GOOGLE FONTS REQUIRED
+   ----------------------
+   JetBrains Mono (400,500,700) + Orbitron (400,700,900)
+   Add the appropriate @import or <link> before this file.
+   ============================================================ */
+
+/* ══════════════════════════════════════════
+   DARK MODE  (default / .theme-dark)
+══════════════════════════════════════════ */
+:root,
+.theme-dark {
+  /* Palette */
+  --primary:           #ff0066;
+  --primary-lt:        #ff4488;
+  --primary-dk:        #cc0050;
+  --accent1:           #ff8c00;
+  --accent2:           #00ffaa;
+  --accent3:           #ff44aa;
+  --grad-text:         linear-gradient(135deg,#ff0066 0%,#ff4488 30%,#ff8c00 70%,#ffb300 100%);
+
+  /* Surfaces */
+  --bg:                #000000;
+  --surface:           #100008;
+  --surface2:          #1a000e;
+  --text:              rgba(255,255,255,0.88);
+  --text-dim:          rgba(255,255,255,0.38);
+  --border:            rgba(255,255,255,0.08);
+  --border2:           rgba(255,255,255,0.04);
+
+  /* Primary tints */
+  --primary-tint:      color-mix(in srgb, #ff0066 10%, transparent);
+  --primary-border:    color-mix(in srgb, #ff0066 28%, transparent);
+  --primary-rim:       color-mix(in srgb, #ff0066 55%, transparent);
+
+  /* Orbs */
+  --orb1:              rgba(255,0,102,0.22);
+  --orb2:              rgba(255,140,0,0.18);
+  --orb3:              rgba(0,255,170,0.14);
+
+  /* Grid */
+  --grid-color:        rgba(255,0,102,0.04);
+  --grid-size:         40px;
+  --grid-opacity:      0.07;
+
+  /* Glass */
+  --glass-blur:        blur(8px) saturate(140%);
+  --glass-bg:          rgba(255,255,255,0.03);
+  --glass-border:      2px solid rgba(255,255,255,0.22);
+  --glass-radius:      4px;
+  --glass-shadow:      4px 4px 0 rgba(255,255,255,0.12);
+  --glass-shadow-hover:6px 6px 0 rgba(255,255,255,0.18);
+  --rim-opacity:       0.10;
+
+  /* Buttons */
+  --btn-radius:        2px;
+  --btn-border:        color-mix(in srgb, #ff0066 40%, transparent);
+  --btn-bg:            color-mix(in srgb, #ff0066 9%, transparent);
+  --btn-bg-hover:      color-mix(in srgb, #ff0066 18%, transparent);
+  --btn-glow-shadow:   0 0 24px color-mix(in srgb, #ff0066 30%, transparent);
+
+  /* Nav */
+  --nav-bg:            rgba(0,0,0,0.88);
+
+  /* Typography */
+  --body-font:         'JetBrains Mono', 'Fira Code', monospace;
+  --display-font:      'Orbitron', 'JetBrains Mono', monospace;
+  --hero-tracking:     0em;
+  --hero-weight:       800;
+  --body-weight:       400;
+
+  /* Layout */
+  --section-pad:       56px;
+  --hover-lift:        translateY(0);
+  --transition:        0.08s ease;
+}
+
+/* ══════════════════════════════════════════
+   LIGHT MODE  (.theme-light)
+══════════════════════════════════════════ */
+.theme-light {
+  /* Palette — primaries darken slightly for contrast on light bg */
+  --primary:           #cc0050;
+  --primary-lt:        #ff0066;
+  --primary-dk:        #cc0050;
+  --accent1:           #ff8c00;
+  --accent2:           #00ffaa;
+  --accent3:           #ff44aa;
+  --grad-text:         linear-gradient(135deg,#ff0066 0%,#ff4488 30%,#ff8c00 70%,#ffb300 100%);
+
+  /* Surfaces */
+  --bg:                #fff0f5;
+  --surface:           #ffffff;
+  --surface2:          #ffe0ec;
+  --text:              rgba(30,0,12,0.88);
+  --text-dim:          rgba(30,0,12,0.45);
+  --border:            rgba(0,0,0,0.09);
+  --border2:           rgba(0,0,0,0.04);
+
+  /* Primary tints */
+  --primary-tint:      color-mix(in srgb, #cc0050 10%, transparent);
+  --primary-border:    color-mix(in srgb, #cc0050 28%, transparent);
+  --primary-rim:       color-mix(in srgb, #cc0050 45%, transparent);
+
+  /* Glass */
+  --glass-bg:          rgba(255,255,255,0.70);
+  --glass-border:      2px solid rgba(0,0,0,0.18);
+  --glass-shadow:      4px 4px 0 rgba(0,0,0,0.15);
+  --glass-shadow-hover:6px 6px 0 rgba(0,0,0,0.22);
+
+  /* Buttons */
+  --btn-border:        color-mix(in srgb, #cc0050 40%, transparent);
+  --btn-bg:            color-mix(in srgb, #cc0050 9%, transparent);
+  --btn-bg-hover:      color-mix(in srgb, #cc0050 18%, transparent);
+  --btn-glow-shadow:   0 0 18px color-mix(in srgb, #cc0050 22%, transparent);
+
+  /* Nav */
+  --nav-bg:            rgba(255,255,255,0.92);
+}
+
+/* ══════════════════════════════════════════
+   RESET + BASE ELEMENTS
+══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body-font);
+  font-weight: var(--body-weight);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+::selection { background: color-mix(in srgb, #ff0066 30%, transparent); color: #fff; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Typography ── */
+h1,h2,h3,h4,h5,h6 {
+  font-family: var(--display-font, var(--body-font));
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: var(--hero-tracking);
+  font-weight: var(--hero-weight);
+}
+p { line-height: 1.7; color: var(--text-dim); }
+a { color: var(--primary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--primary-lt); }
+
+/* ── Background grid ── */
+.entropic-grid {
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  opacity: var(--grid-opacity);
+}
+
+/* ── Glass ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition), background var(--transition);
+}
+.glass::before {
+  content: '';
+  position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,var(--rim-opacity)), var(--primary-rim), rgba(255,255,255,var(--rim-opacity)), transparent);
+  pointer-events: none;
+}
+.glass:hover {
+  transform: var(--hover-lift);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 28px;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  font-family: var(--body-font); font-size: 14px; font-weight: 600;
+  color: var(--primary); cursor: pointer; letter-spacing: 0.02em;
+  transition: all var(--transition); text-decoration: none;
+}
+.btn:hover {
+  background: var(--btn-bg-hover);
+  box-shadow: var(--btn-glow-shadow);
+  transform: var(--hover-lift);
+}
+.btn-ghost {
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-dim);
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: var(--btn-radius);
+  border: 1px solid var(--primary-border);
+  background: var(--primary-tint);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: var(--primary);
+}
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--primary); box-shadow: 0 0 8px var(--primary);
+  animation: entropic-pulse 2s infinite;
+}
+
+/* ── Gradient text ── */
+.grad-text {
+  background: var(--grad-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ── Nav ── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  height: 60px; padding: 0 clamp(16px,4vw,48px);
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+
+/* ── Section ── */
+.section { padding: var(--section-pad) clamp(16px,5vw,80px); }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 10px;
+}
+.section-title {
+  font-size: clamp(24px,4vw,48px); font-weight: 800;
+  letter-spacing: var(--hero-tracking); color: var(--text); margin-bottom: 16px;
+}
+.section-sub {
+  font-size: clamp(14px,1.8vw,17px); color: var(--text-dim);
+  line-height: 1.7; max-width: 540px;
+}
+
+/* ── Grids ── */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 18px; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: var(--border); margin: calc(var(--section-pad) / 2) 0; }
+
+/* ── Orb ── */
+.orb { position: fixed; border-radius: 50%; pointer-events: none; will-change: transform; z-index: 0; }
+
+/* ── Animations ── */
+@keyframes entropic-pulse   { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes entropic-shimmer { 0%,100%{opacity:0.4} 50%{opacity:1} }
+@keyframes entropic-float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes entropic-drift1  { 0%{transform:translate(4vw,8vh)} 25%{transform:translate(52vw,4vh)} 50%{transform:translate(58vw,36vh)} 75%{transform:translate(12vw,44vh)} 100%{transform:translate(4vw,8vh)} }
+@keyframes entropic-drift2  { 0%{transform:translate(48vw,18vh)} 30%{transform:translate(6vw,48vh)} 60%{transform:translate(54vw,56vh)} 80%{transform:translate(68vw,8vh)} 100%{transform:translate(48vw,18vh)} }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ══════════════════════════════════════════
+   STYLE-SPECIFIC RULES
+══════════════════════════════════════════ */
+/* ── Brutal: sharp, no blur, grid visible, hover = color fill ── */
+.glass { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.glass:hover { border-color: var(--primary); transform: none; box-shadow: var(--glass-shadow); }
+.btn { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.btn:hover { transform: none; background: var(--primary); color: #000; border-color: var(--primary); }
+.theme-light .btn:hover { color: #000; }
+.orb-1, .orb-2, .orb-3, .orb-4 { animation-play-state: paused !important; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--display-font); letter-spacing: 0.02em; }
+.nav { border-bottom: 2px solid var(--primary-border); }
+.divider { height: 2px; background: var(--border); }
+

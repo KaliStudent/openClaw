@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Vault Store — Shop</title>
+  <link rel="stylesheet" href="../../entropic-css/brutal-asphalt.css" id="theme-stylesheet"/>
+  <style>
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px}
+    .product-card{border:1px solid var(--hairline,var(--border));transition:border-color var(--transition);cursor:pointer;position:relative;overflow:hidden}
+    .product-card:hover{border-color:var(--fore,var(--primary))}
+    .product-img{aspect-ratio:1;background:var(--surface,var(--panel));display:flex;align-items:center;justify-content:center;font-size:48px;border-bottom:1px solid var(--hairline,var(--border))}
+    .product-info{padding:20px 18px}
+    .product-name{font-size:14px;font-weight:700;color:var(--lumen,var(--text));margin-bottom:4px}
+    .product-price{font-family:var(--display-font);font-size:18px;font-weight:900;color:var(--text)}
+    .product-price .old{font-size:13px;font-weight:400;color:var(--muted);text-decoration:line-through;margin-left:6px}
+    .product-badge{position:absolute;top:12px;left:12px;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:var(--fore,var(--primary));color:var(--void,#0d0f12)}
+    .add-btn{width:100%;padding:11px;margin-top:12px;font-size:11px}
+    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;align-items:center}
+    .filter-pill{padding:5px 14px;border:1px solid var(--hairline,var(--border));background:transparent;color:var(--text-dim);font-family:var(--body-font);font-size:11px;font-weight:700;cursor:pointer;transition:all var(--transition);letter-spacing:.06em;text-transform:uppercase}
+    .filter-pill:hover,.filter-pill.active{border-color:var(--fore,var(--primary));color:var(--lumen,var(--text));background:var(--primary-tint,rgba(255,255,255,.04))}
+    /* Cart drawer */
+    .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
+    .cart-overlay.open{opacity:1;pointer-events:all}
+    .cart-drawer{position:fixed;top:0;right:0;height:100vh;width:min(400px,100vw);background:var(--panel,#22262d);border-left:1px solid var(--hairline,var(--border));z-index:301;transform:translateX(100%);transition:transform .3s cubic-bezier(.25,.46,.45,.94);display:flex;flex-direction:column;padding:0}
+    .cart-drawer.open{transform:translateX(0)}
+    .cart-head{padding:20px 24px;border-bottom:1px solid var(--hairline,var(--border));display:flex;align-items:center;justify-content:space-between}
+    .cart-body{flex:1;overflow-y:auto;padding:20px 24px}
+    .cart-foot{padding:20px 24px;border-top:1px solid var(--hairline,var(--border))}
+    .cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border2,rgba(58,64,74,.4))}
+    .cart-item-img{width:56px;height:56px;background:var(--surface,var(--graphite));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid var(--hairline,var(--border))}
+    .qty-ctrl{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .qty-btn{width:24px;height:24px;border:1px solid var(--hairline,var(--border));background:transparent;color:var(--text);cursor:pointer;font-family:var(--body-font);font-size:13px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+    .qty-btn:hover{border-color:var(--fore,var(--primary));color:var(--lumen,var(--text))}
+    .cart-badge{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--fore,var(--primary));color:var(--void,#0d0f12);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+    .theme-bar{position:fixed;bottom:16px;left:16px;z-index:999;display:flex;gap:6px;align-items:center;background:var(--surface,var(--panel));border:1px solid var(--hairline,var(--border));padding:8px 12px;backdrop-filter:blur(20px)}
+    .theme-bar select,.theme-bar button{font-family:var(--body-font);font-size:10px;background:transparent;border:1px solid var(--hairline,var(--border));color:var(--text);padding:3px 7px;cursor:pointer}
+  </style>
+</head>
+<body>
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;"><div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle,var(--orb1) 0%,transparent 70%);filter:blur(60px);top:-5%;right:5%;border-radius:50%;"></div><div class="noise"></div><div class="entropic-grid" style="position:absolute;inset:0;"></div></div>
+
+<!-- Cart overlay + drawer -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-head">
+    <span style="font-family:var(--display-font);font-size:14px;font-weight:800;color:var(--lumen,var(--text));letter-spacing:.06em;">CART (<span id="cart-count">0</span>)</span>
+    <button onclick="closeCart()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:20px;padding:0;">✕</button>
+  </div>
+  <div class="cart-body" id="cart-items"><div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;">Your cart is empty.</div></div>
+  <div class="cart-foot">
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+      <span style="font-size:13px;color:var(--text-dim);">Subtotal</span>
+      <span style="font-family:var(--display-font);font-size:18px;font-weight:900;color:var(--lumen,var(--text));" id="cart-total">$0.00</span>
+    </div>
+    <!-- ═══ STRIPE CHECKOUT BUTTON ═══════════════════════════
+         Replace this button's onclick with your Stripe
+         checkout session creation call.
+         Docs: https://stripe.com/docs/checkout/quickstart
+         Example:
+           fetch('/create-checkout-session', {method:'POST',...})
+             .then(res => res.json())
+             .then(data => stripe.redirectToCheckout({sessionId: data.id}))
+    ══════════════════════════════════════════════════════════ -->
+    <button class="btn btn-primary" style="width:100%;padding:14px;font-size:13px;margin-bottom:10px;" onclick="stripeCheckout()">
+      Pay with Card (Stripe)
+    </button>
+    <!-- ═══ PAYPAL BUTTON CONTAINER ════════════════════════════
+         Replace this div with the PayPal JS SDK button render.
+         Docs: https://developer.paypal.com/sdk/js/
+         Example:
+           <div id="paypal-button-container"></div>
+           <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+           <script>paypal.Buttons({...}).render('#paypal-button-container')</script>
+    ══════════════════════════════════════════════════════════ -->
+    <div id="paypal-button-container">
+      <button class="btn btn-ghost" style="width:100%;padding:12px;font-size:13px;" onclick="paypalCheckout()">
+        Pay with PayPal
+      </button>
+    </div>
+    <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:12px;">Secure checkout · SSL encrypted</p>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">VAULT<span style="color:var(--muted);">STORE</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Shop</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <a href="#" style="color:var(--text-dim);font-size:13px;" onclick="event.preventDefault();document.getElementById('search-input').focus()">🔍</a>
+    <button onclick="openCart()" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:18px;position:relative;padding:4px;">
+      🛒 <span class="cart-badge" id="nav-cart-count" style="display:none;">0</span>
+    </button>
+    <a href="#" class="btn btn-primary" style="font-size:11px;padding:7px 16px;">Sign In</a>
+  </div>
+</nav>
+
+<!-- Hero banner -->
+<div style="position:relative;z-index:10;padding:60px clamp(16px,5vw,80px);border-bottom:1px solid var(--hairline,var(--border));display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:1200px;margin:0 auto;">
+  <div>
+    <div class="badge" style="margin-bottom:20px;width:fit-content;"><span class="badge-dot"></span>NEW ARRIVALS JUST DROPPED</div>
+    <h1 style="font-size:clamp(36px,6vw,72px);line-height:0.95;margin-bottom:18px;">Objects of<br><span class="grad-text">distinction.</span></h1>
+    <p style="font-size:clamp(13px,1.8vw,16px);max-width:400px;line-height:1.7;margin-bottom:28px;">Curated products for people who care about quality, craft, and design.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;"><a href="#products" class="btn btn-primary">Shop Now</a><a href="#categories" class="btn btn-ghost">Browse Categories</a></div>
+  </div>
+  <div style="aspect-ratio:1;background:var(--surface,var(--panel));display:flex;align-items:center;justify-content:center;font-size:80px;border:1px solid var(--hairline,var(--border));">🏺</div>
+</div>
+
+<!-- Category strip -->
+<div id="categories" style="position:relative;z-index:10;border-bottom:1px solid var(--hairline,var(--border));">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));max-width:1200px;margin:0 auto;">
+    <button class="filter-pill active" style="padding:20px;border-radius:0;border:none;border-right:1px solid var(--hairline,var(--border));" onclick="filterCat(this,'all')">All Products</button>
+    <button class="filter-pill" style="padding:20px;border-radius:0;border:none;border-right:1px solid var(--hairline,var(--border));" onclick="filterCat(this,'tech')">Tech</button>
+    <button class="filter-pill" style="padding:20px;border-radius:0;border:none;border-right:1px solid var(--hairline,var(--border));" onclick="filterCat(this,'home')">Home</button>
+    <button class="filter-pill" style="padding:20px;border-radius:0;border:none;border-right:1px solid var(--hairline,var(--border));" onclick="filterCat(this,'wear')">Apparel</button>
+    <button class="filter-pill" style="padding:20px;border-radius:0;border:none;" onclick="filterCat(this,'tools')">Tools</button>
+  </div>
+</div>
+
+<!-- Products -->
+<section id="products" class="section" style="position:relative;z-index:10;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px;">
+    <div>
+      <h2 class="section-title" style="font-size:clamp(20px,3vw,32px);margin-bottom:4px;">All Products</h2>
+      <p style="font-size:12px;color:var(--muted);" id="product-count">Showing 8 products</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="search-input" type="text" placeholder="Search..." oninput="searchProducts(this.value)" style="padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid var(--hairline,var(--border));color:var(--text);font-family:var(--body-font);font-size:12px;outline:none;width:180px;transition:border-color var(--transition);" onfocus="this.style.borderColor='var(--fore)'" onblur="this.style.borderColor=''" />
+      <select onchange="sortProducts(this.value)" style="padding:8px 10px;background:var(--surface,var(--panel));border:1px solid var(--hairline,var(--border));color:var(--text);font-family:var(--body-font);font-size:11px;outline:none;cursor:pointer;">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+  </div>
+  <div class="product-grid" id="product-grid"></div>
+</section>
+
+<footer class="footer" style="position:relative;z-index:10;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:32px;margin-bottom:32px;">
+    <div><div class="nav-logo" style="display:block;margin-bottom:12px;">VAULT<span style="color:var(--muted);">STORE</span></div><p style="font-size:12px;line-height:1.7;">Curated goods for discerning people.</p></div>
+    <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Shop</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="#" style="font-size:12px;color:var(--text-dim);">All Products</a><a href="#categories" style="font-size:12px;color:var(--text-dim);">Categories</a><a href="cart.html" style="font-size:12px;color:var(--text-dim);">Cart</a></div></div>
+    <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Help</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="faq.html" style="font-size:12px;color:var(--text-dim);">FAQ</a><a href="contact.html" style="font-size:12px;color:var(--text-dim);">Contact</a><a href="faq.html#returns" style="font-size:12px;color:var(--text-dim);">Returns</a></div></div>
+    <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Legal</div><div style="display:flex;flex-direction:column;gap:8px;"><a href="privacy.html" style="font-size:12px;color:var(--text-dim);">Privacy</a><a href="terms.html" style="font-size:12px;color:var(--text-dim);">Terms</a></div></div>
+  </div>
+  <div style="max-width:1200px;margin:0 auto;border-top:1px solid var(--border2,var(--border));padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span style="font-size:11px;">© 2026 Vault Store. All rights reserved.</span>
+    <span style="font-size:11px;color:var(--muted);">Payments secured by Stripe &amp; PayPal</span>
+  </div>
+</footer>
+
+<div class="theme-bar">
+  <select onchange="document.getElementById('theme-stylesheet').href='../../entropic-css/'+this.value+'.css'">
+    <option value="brutal-asphalt">Asphalt · Brutal</option><option value="minimal-asphalt">Asphalt · Minimal</option>
+    <option value="brutal-cobalt">Cobalt · Brutal</option><option value="minimal-cobalt">Cobalt · Minimal</option>
+    <option value="brutal-entropic">Entropic · Brutal</option><option value="minimal-entropic">Entropic · Minimal</option>
+    <option value="brutal-solar">Solar · Brutal</option><option value="brutal-cherry">Cherry · Brutal</option>
+  </select>
+  <button onclick="document.body.classList.toggle('theme-light')">☀/🌑</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   PRODUCT DATA — Replace with your real catalog
+   (or fetch from your backend API)
+══════════════════════════════════════════ */
+const PRODUCTS = [
+  { id:1, name:'Obsidian Desk Lamp', price:89, oldPrice:120, cat:'home', emoji:'💡', badge:'SALE', desc:'Precision-machined aluminum. Three temperature modes.' },
+  { id:2, name:'Carbon Mechanical Keyboard', price:249, cat:'tech', emoji:'⌨️', badge:'NEW', desc:'Full aluminum chassis. POM plate. Cherry MX switches.' },
+  { id:3, name:'Minimal Wallet', price:39, cat:'wear', emoji:'👜', desc:'8-card capacity. Full-grain leather. Slim profile.' },
+  { id:4, name:'Titanium Pen', price:65, cat:'tools', emoji:'✒️', desc:'CNC-machined titanium body. Works with any G2 refill.' },
+  { id:5, name:'Woven Cable Set', price:29, cat:'tech', emoji:'🔌', desc:'USB-C, Lightning, Micro-USB. Braided nylon. 6ft.' },
+  { id:6, name:'Ceramic Pour-Over', price:55, cat:'home', emoji:'☕', badge:'POPULAR', desc:'Matte black ceramic. Compatible with Chemex filters.' },
+  { id:7, name:'Technical Jacket', price:185, cat:'wear', emoji:'🧥', desc:'Wind and water-resistant shell. Hidden zip pockets.' },
+  { id:8, name:'Precision Screwdriver Set', price:49, cat:'tools', emoji:'🪛', desc:'48 precision bits. Magnetic driver. Compact case.' },
+];
+
+let cart = [];
+let activeCategory = 'all';
+let searchQuery = '';
+let sortMode = 'default';
+
+function renderProducts() {
+  let filtered = PRODUCTS.filter(p => {
+    const matchCat  = activeCategory === 'all' || p.cat === activeCategory;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
+  });
+  if (sortMode === 'price-asc')  filtered.sort((a,b) => a.price - b.price);
+  if (sortMode === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+  if (sortMode === 'name')       filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+  document.getElementById('product-count').textContent = `Showing ${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+  document.getElementById('product-grid').innerHTML = filtered.map(p => `
+    <div class="product-card glass" data-id="${p.id}">
+      ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div style="font-size:12px;color:var(--muted);margin:4px 0 8px;line-height:1.5;">${p.desc}</div>
+        <div class="product-price">$${p.price}${p.oldPrice ? `<span class="old">$${p.oldPrice}</span>` : ''}</div>
+        <button class="btn btn-primary add-btn" onclick="addToCart(${p.id},event)">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id, e) {
+  e.stopPropagation();
+  const p = PRODUCTS.find(x => x.id === id);
+  const existing = cart.find(x => x.id === id);
+  if (existing) { existing.qty++; } else { cart.push({...p, qty:1}); }
+  updateCartUI();
+  openCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartUI();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else updateCartUI();
+}
+
+function updateCartUI() {
+  const count = cart.reduce((s,x) => s + x.qty, 0);
+  const total = cart.reduce((s,x) => s + x.price * x.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('nav-cart-count').textContent = count;
+  document.getElementById('nav-cart-count').style.display = count > 0 ? 'flex' : 'none';
+  document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+  document.getElementById('cart-items').innerHTML = cart.length === 0
+    ? '<div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:13px;">Your cart is empty.</div>'
+    : cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-img">${item.emoji}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--lumen,var(--text));margin-bottom:2px;">${item.name}</div>
+          <div style="font-size:12px;color:var(--muted);">$${item.price} each</div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+            <span style="font-size:13px;font-weight:700;min-width:20px;text-align:center;">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+            <button onclick="removeFromCart(${item.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;margin-left:auto;">Remove</button>
+          </div>
+        </div>
+        <div style="font-family:var(--display-font);font-size:14px;font-weight:800;color:var(--text);">$${(item.price*item.qty).toFixed(2)}</div>
+      </div>`).join('');
+}
+
+function openCart()  { document.getElementById('cart-drawer').classList.add('open');  document.getElementById('cart-overlay').classList.add('open'); }
+function closeCart() { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-overlay').classList.remove('open'); }
+function filterCat(el, cat) { activeCategory = cat; document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(); }
+function searchProducts(q) { searchQuery = q; renderProducts(); }
+function sortProducts(mode) { sortMode = mode; renderProducts(); }
+
+/* ═══════════════════════════════════════════════
+   STRIPE CHECKOUT — Wire up your real integration
+   Replace this stub with your actual Stripe call
+═══════════════════════════════════════════════ */
+function stripeCheckout() {
+  if (cart.length === 0) { alert('Your cart is empty.'); return; }
+  // TODO: Replace with real Stripe checkout session
+  // 1. POST cart items to your backend
+  // 2. Backend creates a Stripe Checkout Session
+  // 3. Redirect to Stripe hosted checkout
+  // Example:
+  //   const stripe = Stripe('YOUR_PUBLISHABLE_KEY');
+  //   fetch('/api/checkout', { method:'POST', body: JSON.stringify({items: cart}) })
+  //     .then(r => r.json())
+  //     .then(({sessionId}) => stripe.redirectToCheckout({sessionId}));
+  alert('[STUB] Stripe checkout would launch here.\n\nCart: ' + cart.map(i => `${i.name} x${i.qty}`).join(', '));
+}
+
+/* ═══════════════════════════════════════════════
+   PAYPAL CHECKOUT — Wire up your real integration
+   Replace this stub with the PayPal JS SDK
+═══════════════════════════════════════════════ */
+function paypalCheckout() {
+  if (cart.length === 0) { alert('Your cart is empty.'); return; }
+  // TODO: Replace with PayPal JS SDK buttons
+  // 1. Load <script src="https://www.paypal.com/sdk/js?client-id=YOUR_ID&currency=USD">
+  // 2. Render paypal.Buttons({...}).render('#paypal-button-container')
+  // 3. In createOrder: POST cart to backend, return orderID
+  // 4. In onApprove: capture payment, show confirmation
+  alert('[STUB] PayPal checkout would launch here.\n\nCart: ' + cart.map(i => `${i.name} x${i.qty}`).join(', '));
+}
+
+// Init
+renderProducts();
+</script>
+</body>
+</html>

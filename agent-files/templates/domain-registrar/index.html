@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domains — Find Your Place on the Web</title>
+  <link rel="stylesheet" href="../../entropic-css/brutal-asphalt.css" id="theme-stylesheet" />
+  <style>
+    /* ── Page-specific layout ── */
+    .hero-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px clamp(16px,5vw,80px) 80px; text-align: center; position: relative; z-index: 10; }
+    .search-bar { display: flex; width: 100%; max-width: 640px; margin: 0 auto; }
+    .search-bar input { flex: 1; padding: 14px 20px; background: var(--glass-bg, rgba(255,255,255,0.04)); border: 1px solid var(--hairline, var(--border)); border-right: none; border-radius: var(--glass-radius, 4px) 0 0 var(--glass-radius, 4px); color: var(--text); font-family: var(--body-font); font-size: 15px; outline: none; transition: border-color var(--transition); backdrop-filter: blur(12px); }
+    .search-bar input:focus { border-color: var(--fore, var(--primary)); }
+    .search-bar input::placeholder { color: var(--muted, var(--text-dim)); }
+    .search-bar .btn { border-radius: 0 var(--glass-radius, 4px) var(--glass-radius, 4px) 0; padding: 14px 28px; white-space: nowrap; }
+    .tld-strip { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 24px; }
+    .tld-pill { padding: 4px 14px; border: 1px solid var(--hairline, var(--border)); border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--muted, var(--text-dim)); background: transparent; cursor: pointer; transition: all var(--transition); }
+    .tld-pill:hover, .tld-pill.active { border-color: var(--fore, var(--primary)); color: var(--lumen, var(--text)); background: var(--primary-tint, rgba(255,255,255,0.04)); }
+    .price-tag { font-size: 11px; color: var(--muted, var(--text-dim)); margin-left: 4px; }
+
+    .results-panel { display: none; width: 100%; max-width: 640px; margin: 16px auto 0; text-align: left; }
+    .results-panel.active { display: block; }
+    .result-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border2, var(--border)); }
+    .result-row:last-child { border-bottom: none; }
+    .result-name { font-weight: 700; font-size: 15px; color: var(--lumen, var(--text)); }
+    .result-avail { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; }
+    .result-avail.yes { color: #4ade80; border: 1px solid rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); }
+    .result-avail.no  { color: var(--muted); border: 1px solid var(--border2); }
+    .result-price { font-family: var(--display-font); font-weight: 700; font-size: 14px; color: var(--text); }
+
+    .tld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 1px; }
+    .tld-card { padding: 20px 16px; border: 1px solid var(--hairline, var(--border)); text-align: center; transition: all var(--transition); cursor: pointer; position: relative; overflow: hidden; }
+    .tld-card:hover { border-color: var(--fore, var(--primary)); }
+    .tld-card .ext { font-family: var(--display-font); font-size: 20px; font-weight: 900; color: var(--lumen, var(--text)); margin-bottom: 6px; }
+    .tld-card .from { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .tld-card .price { font-size: 16px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+    .feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; }
+    @media(max-width:640px){ .feature-row{ grid-template-columns:1fr; } }
+    .feature-item { padding: 32px 28px; border: 1px solid var(--hairline, var(--border)); }
+    .feature-item .icon { font-size: 24px; margin-bottom: 14px; }
+    .feature-item h3 { font-size: 16px; margin-bottom: 8px; color: var(--lumen, var(--text)); }
+    .feature-item p { font-size: 13px; line-height: 1.7; }
+
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1px; }
+    .plan-card { padding: 36px 28px; border: 1px solid var(--hairline, var(--border)); display: flex; flex-direction: column; gap: 20px; transition: border-color var(--transition); }
+    .plan-card:hover, .plan-card.featured { border-color: var(--fore, var(--primary)); }
+    .plan-card.featured { position: relative; }
+    .plan-card.featured::before { content:'MOST POPULAR'; position:absolute; top:0; right:0; font-size:9px; font-weight:800; letter-spacing:.12em; color:var(--void, #000); background:var(--fore, var(--primary)); padding:4px 10px; }
+    .plan-name { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+    .plan-price { font-family:var(--display-font); font-size:42px; font-weight:900; color:var(--lumen, var(--text)); line-height:1; }
+    .plan-price span { font-size:16px; font-weight:400; color:var(--muted); }
+    .plan-features { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .plan-features li { font-size:12px; color:var(--text-dim, var(--text)); display:flex; align-items:center; gap:8px; }
+    .plan-features li::before { content:'—'; color:var(--muted); flex-shrink:0; }
+
+    .transfers-bar { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; flex-wrap:wrap; gap:16px; }
+
+    /* Theme switcher */
+    .theme-switcher { display:flex; align-items:center; gap:8px; }
+    .theme-switcher select { background:var(--surface, var(--panel)); border:1px solid var(--hairline, var(--border)); color:var(--text); font-family:var(--body-font); font-size:11px; padding:4px 8px; border-radius:2px; outline:none; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<!-- Background -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;width:600px;height:600px;background:radial-gradient(circle,var(--orb1,rgba(255,255,255,0.025)) 0%,transparent 70%);filter:blur(60px);top:-10%;left:-5%;border-radius:50%;"></div>
+  <div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle,var(--orb2,rgba(200,210,220,0.030)) 0%,transparent 70%);filter:blur(50px);bottom:5%;right:-5%;border-radius:50%;"></div>
+  <div class="noise"></div>
+  <!-- Grid overlay (brutal only) -->
+  <div class="entropic-grid" style="position:absolute;inset:0;"></div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">VOID<span style="color:var(--muted);">.DOMAINS</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Search</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="theme-switcher">
+      <select id="theme-select" onchange="switchTheme(this.value)">
+        <option value="brutal-asphalt">Asphalt · Brutal</option>
+        <option value="minimal-asphalt">Asphalt · Minimal</option>
+        <option value="brutal-cobalt">Cobalt · Brutal</option>
+        <option value="minimal-cobalt">Cobalt · Minimal</option>
+        <option value="brutal-entropic">Entropic · Brutal</option>
+        <option value="minimal-entropic">Entropic · Minimal</option>
+      </select>
+      <button onclick="toggleLight()" style="font-size:11px;padding:4px 8px;border:1px solid var(--hairline,var(--border));background:transparent;color:var(--text);cursor:pointer;border-radius:2px;font-family:var(--body-font);">☀/🌑</button>
+    </div>
+    <a href="#" class="btn btn-primary" style="font-size:11px;padding:7px 16px;">Sign In</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero-wrap">
+  <div class="badge" style="margin-bottom:28px;">
+    <span class="badge-dot"></span>
+    DOMAIN REGISTRATION &amp; MANAGEMENT
+  </div>
+  <h1 style="font-size:clamp(40px,8vw,96px);max-width:860px;margin-bottom:20px;">
+    Your domain.<br>
+    <span class="grad-text">Your signal.</span>
+  </h1>
+  <p style="font-size:clamp(14px,2vw,18px);max-width:480px;margin-bottom:40px;line-height:1.7;">
+    Find and register the perfect domain. Instant setup. Privacy protection included. AI-assisted site launch ready.
+  </p>
+
+  <!-- Search -->
+  <div class="glass" style="width:100%;max-width:640px;padding:0;overflow:visible;border-radius:var(--glass-radius,4px);">
+    <div class="search-bar">
+      <input type="text" id="domain-input" placeholder="Search for your domain..." autocomplete="off" onkeydown="if(event.key==='Enter')searchDomain()" />
+      <button class="btn btn-primary" onclick="searchDomain()">SEARCH</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="glass results-panel" id="results" style="max-width:640px;">
+    <div id="results-inner"></div>
+  </div>
+
+  <!-- TLD strip -->
+  <div class="tld-strip">
+    <span class="tld-pill active" onclick="filterTLD(this,'.com')">.com <span class="price-tag">$12/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.io')">.io <span class="price-tag">$39/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.ai')">.ai <span class="price-tag">$69/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.dev')">.dev <span class="price-tag">$14/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.net')">.net <span class="price-tag">$14/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.org')">.org <span class="price-tag">$12/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.co')">.co <span class="price-tag">$28/yr</span></span>
+    <span class="tld-pill" onclick="filterTLD(this,'.app')">.app <span class="price-tag">$18/yr</span></span>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div style="position:relative;z-index:10;border-top:1px solid var(--hairline,var(--border));border-bottom:1px solid var(--hairline,var(--border));">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));max-width:1200px;margin:0 auto;">
+    <div class="stat-block"><div class="stat-num">500+</div><div class="stat-label">TLD Extensions</div></div>
+    <div class="stat-block"><div class="stat-num">$9</div><div class="stat-label">Domains from</div></div>
+    <div class="stat-block"><div class="stat-num">99.9%</div><div class="stat-label">DNS Uptime</div></div>
+    <div class="stat-block"><div class="stat-num">24/7</div><div class="stat-label">AI Support</div></div>
+  </div>
+</div>
+
+<!-- TLD showcase -->
+<section class="section" style="position:relative;z-index:10;">
+  <div style="margin-bottom:40px;">
+    <p class="section-eyebrow">Extensions</p>
+    <h2 class="section-title">Popular TLDs</h2>
+    <p class="section-sub">From classic .com to modern .ai — every extension at transparent pricing.</p>
+  </div>
+  <div class="tld-grid">
+    <div class="tld-card"><div class="ext">.com</div><div class="from">FROM</div><div class="price">$12/yr</div></div>
+    <div class="tld-card"><div class="ext">.io</div><div class="from">FROM</div><div class="price">$39/yr</div></div>
+    <div class="tld-card"><div class="ext">.ai</div><div class="from">FROM</div><div class="price">$69/yr</div></div>
+    <div class="tld-card"><div class="ext">.dev</div><div class="from">FROM</div><div class="price">$14/yr</div></div>
+    <div class="tld-card"><div class="ext">.app</div><div class="from">FROM</div><div class="price">$18/yr</div></div>
+    <div class="tld-card"><div class="ext">.co</div><div class="from">FROM</div><div class="price">$28/yr</div></div>
+    <div class="tld-card"><div class="ext">.net</div><div class="from">FROM</div><div class="price">$14/yr</div></div>
+    <div class="tld-card"><div class="ext">.org</div><div class="from">FROM</div><div class="price">$12/yr</div></div>
+    <div class="tld-card"><div class="ext">.studio</div><div class="from">FROM</div><div class="price">$22/yr</div></div>
+    <div class="tld-card"><div class="ext">.tech</div><div class="from">FROM</div><div class="price">$44/yr</div></div>
+    <div class="tld-card"><div class="ext">.store</div><div class="from">FROM</div><div class="price">$32/yr</div></div>
+    <div class="tld-card"><div class="ext">.lol</div><div class="from">FROM</div><div class="price">$18/yr</div></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" style="position:relative;z-index:10;">
+  <div style="margin-bottom:40px;text-align:center;">
+    <p class="section-eyebrow">Why Void Domains</p>
+    <h2 class="section-title">Everything included. Nothing hidden.</h2>
+  </div>
+  <div class="feature-row">
+    <div class="feature-item glass">
+      <div class="icon">🔒</div>
+      <h3>WHOIS Privacy</h3>
+      <p>Your personal information is shielded from public WHOIS lookups — included free on every domain.</p>
+    </div>
+    <div class="feature-item glass">
+      <div class="icon">⚡</div>
+      <h3>Instant DNS</h3>
+      <p>Propagate globally in under 60 seconds. Our anycast DNS network spans 28 edge locations.</p>
+    </div>
+    <div class="feature-item glass">
+      <div class="icon">🤖</div>
+      <h3>AI Site Launch</h3>
+      <p>Purchase a domain and get matched with a template. An AI agent walks you from registration to live site.</p>
+    </div>
+    <div class="feature-item glass">
+      <div class="icon">🔄</div>
+      <h3>Auto-Renew</h3>
+      <p>Never lose a domain again. Smart auto-renew with advance notifications at 90, 30, and 7 days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Site templates upsell -->
+<section class="section" style="position:relative;z-index:10;">
+  <div style="margin-bottom:40px;">
+    <p class="section-eyebrow">Add-On Templates</p>
+    <h2 class="section-title">Buy a domain.<br>Launch a site.</h2>
+    <p class="section-sub">Choose from professionally designed templates. AI handles the setup. You own the result.</p>
+  </div>
+  <div class="plans-grid">
+    <div class="plan-card glass">
+      <div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">Free<span> / domain</span></div>
+      </div>
+      <ul class="plan-features">
+        <li>Domain registration</li>
+        <li>WHOIS privacy</li>
+        <li>DNS management</li>
+        <li>Basic redirect</li>
+      </ul>
+      <a href="#" class="btn" style="width:100%;text-align:center;">Register Domain</a>
+    </div>
+    <div class="plan-card glass featured">
+      <div>
+        <div class="plan-name">Launch</div>
+        <div class="plan-price">$49<span> one-time</span></div>
+      </div>
+      <ul class="plan-features">
+        <li>Everything in Starter</li>
+        <li>1 premium site template</li>
+        <li>AI setup assistant</li>
+        <li>1 year hosting included</li>
+        <li>Custom email address</li>
+      </ul>
+      <a href="pricing.html" class="btn btn-primary" style="width:100%;text-align:center;">Get Started</a>
+    </div>
+    <div class="plan-card glass">
+      <div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$99<span> one-time</span></div>
+      </div>
+      <ul class="plan-features">
+        <li>Everything in Launch</li>
+        <li>All 7 template types</li>
+        <li>Ecommerce + payments</li>
+        <li>Priority AI support</li>
+        <li>2 years hosting</li>
+      </ul>
+      <a href="pricing.html" class="btn" style="width:100%;text-align:center;">Go Pro</a>
+    </div>
+  </div>
+</section>
+
+<!-- Transfer bar -->
+<div style="position:relative;z-index:10;border-top:1px solid var(--hairline,var(--border));border-bottom:1px solid var(--hairline,var(--border));">
+  <div class="transfers-bar glass" style="max-width:1200px;margin:0 auto;border:none;border-radius:0;">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--lumen,var(--text));">Already have a domain?</div>
+      <div style="font-size:12px;color:var(--muted);">Transfer to Void Domains and get 1 year free renewal.</div>
+    </div>
+    <a href="contact.html" class="btn" style="white-space:nowrap;">Transfer Domain →</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer" style="position:relative;z-index:10;">
+  <div class="divider-bright" style="margin-bottom:40px;"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px;max-width:1200px;margin:0 auto 40px;">
+    <div>
+      <div class="nav-logo" style="font-size:16px;display:block;margin-bottom:12px;">VOID<span style="color:var(--muted);">.DOMAINS</span></div>
+      <p style="font-size:12px;line-height:1.7;max-width:200px;">Domain registration and instant site launch — built for builders.</p>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Products</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="index.html" style="font-size:12px;color:var(--text-dim);">Domain Search</a>
+        <a href="pricing.html" style="font-size:12px;color:var(--text-dim);">Pricing</a>
+        <a href="index.html#templates" style="font-size:12px;color:var(--text-dim);">Site Templates</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Company</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="about.html" style="font-size:12px;color:var(--text-dim);">About</a>
+        <a href="contact.html" style="font-size:12px;color:var(--text-dim);">Contact</a>
+        <a href="faq.html" style="font-size:12px;color:var(--text-dim);">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Legal</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="privacy.html" style="font-size:12px;color:var(--text-dim);">Privacy Policy</a>
+        <a href="terms.html" style="font-size:12px;color:var(--text-dim);">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:24px;border-top:1px solid var(--border2,var(--border));">
+    <span style="font-size:11px;">© 2026 Void Domains. All rights reserved.</span>
+    <span style="font-size:11px;color:var(--muted);">Powered by Entropic UI</span>
+  </div>
+</footer>
+
+<script>
+/* ── Theme switcher ── */
+function switchTheme(val) {
+  const isLight = document.body.classList.contains('theme-light');
+  document.getElementById('theme-stylesheet').href = '../../entropic-css/' + val + '.css';
+  if (isLight) document.body.classList.add('theme-light');
+}
+function toggleLight() {
+  document.body.classList.toggle('theme-light');
+}
+
+/* ── Domain search (stub — wire to registrar API) ── */
+const PRICES = { '.com':12, '.io':39, '.ai':69, '.dev':14, '.net':14, '.org':12, '.co':28, '.app':18, '.studio':22, '.tech':44, '.store':32, '.lol':18 };
+function searchDomain() {
+  const raw = document.getElementById('domain-input').value.trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+  if (!raw) return;
+  const base = raw.includes('.') ? raw.split('.')[0] : raw;
+  const ext  = raw.includes('.') ? '.' + raw.split('.').slice(1).join('.') : null;
+  const panel = document.getElementById('results');
+  const inner = document.getElementById('results-inner');
+  // Show results for common TLDs
+  const tlds = ext ? [ext] : ['.com','.io','.ai','.dev','.co'];
+  inner.innerHTML = tlds.map(t => {
+    const avail = Math.random() > 0.4; // stub — replace with API call
+    const price = PRICES[t] || 19;
+    return `<div class="result-row">
+      <span class="result-name">${base}${t}</span>
+      <span class="result-avail ${avail?'yes':'no'}">${avail?'Available':'Taken'}</span>
+      <span class="result-price">$${price}<span style="font-size:11px;font-weight:400;color:var(--muted)">/yr</span></span>
+      ${avail ? `<a href="#" class="btn btn-primary" style="padding:6px 14px;font-size:11px;margin-left:12px;">Add</a>` : `<span style="font-size:11px;color:var(--muted);margin-left:12px;">Backorder →</span>`}
+    </div>`;
+  }).join('');
+  panel.classList.add('active');
+}
+function filterTLD(el, tld) {
+  document.querySelectorAll('.tld-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── Reveal on scroll ── */
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>

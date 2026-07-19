@@ -1,0 +1,15 @@
+{
+  "type": "gumroad",
+  "scopes": [
+    "account",
+    "view_profile",
+    "edit_profile",
+    "edit_products",
+    "edit_emails",
+    "view_sales",
+    "edit_sales",
+    "mark_sales_as_shipped",
+    "view_payouts",
+    "view_tax_data"
+  ]
+}

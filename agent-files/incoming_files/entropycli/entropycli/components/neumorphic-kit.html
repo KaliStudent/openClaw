@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Entropic UI — Neumorphic Component Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ═══════════════════════════════════
+   ROOT — ENTROPIC DEFAULT TOKENS
+═══════════════════════════════════ */
+:root {
+  --primary:     #03ff6c;
+  --accent1:     #7cfc19;
+  --accent2:     #ffa805;
+  --accent3:     #5b0af2;
+  --grad-text:   linear-gradient(135deg,#03ff6c 0%,#7cfc19 40%,#c4fc19 70%,#ffa805 100%);
+  --orb1:        rgba(3,255,108,0.18);
+  --orb2:        rgba(91,10,242,0.22);
+  --orb3:        rgba(255,168,5,0.12);
+  --orb4:        rgba(196,252,25,0.10);
+
+  /* Neumorphic surface tokens — theme-keyed */
+  --neu-bg:         #0d1420;
+  --neu-shadow-dk:  rgba(0,0,0,0.72);
+  --neu-shadow-lt:  rgba(3,255,108,0.035);
+  --neu-inset-dk:   rgba(0,0,0,0.55);
+  --neu-inset-lt:   rgba(3,255,108,0.030);
+  --neu-border:     rgba(3,255,108,0.10);
+
+  /* Input specific */
+  --input-shadow:   inset 4px 4px 10px rgba(0,0,0,0.65), inset -2px -2px 6px rgba(3,255,108,0.03);
+  --input-focus:    0 0 0 2px rgba(3,255,108,0.25), inset 4px 4px 10px rgba(0,0,0,0.65);
+
+  --body-font: 'Inter', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body-font);
+  background: var(--neu-bg);
+  color: rgba(255,255,255,0.80);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+}
+::selection { background: rgba(255,255,255,0.15); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 2px; }
+
+/* ═══════════════════════════════════
+   BG ORBS
+═══════════════════════════════════ */
+#bg { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
+.orb { position:absolute;border-radius:50%;will-change:transform;pointer-events:none; }
+.orb-1 { width:600px;height:600px;background:radial-gradient(circle,var(--orb1) 0%,transparent 70%);filter:blur(60px);animation:drift1 24s ease-in-out infinite; }
+.orb-2 { width:700px;height:700px;background:radial-gradient(circle,var(--orb2) 0%,transparent 70%);filter:blur(70px);animation:drift2 30s ease-in-out infinite; }
+.orb-3 { width:450px;height:450px;background:radial-gradient(circle,var(--orb3) 0%,transparent 70%);filter:blur(54px);animation:drift3 22s ease-in-out infinite; }
+.orb-4 { width:320px;height:320px;background:radial-gradient(circle,var(--orb4) 0%,transparent 70%);filter:blur(40px);animation:drift4 18s ease-in-out infinite; }
+@keyframes drift1{0%{transform:translate(4vw,8vh)}25%{transform:translate(52vw,4vh)}50%{transform:translate(58vw,36vh)}75%{transform:translate(12vw,44vh)}100%{transform:translate(4vw,8vh)}}
+@keyframes drift2{0%{transform:translate(48vw,18vh)}30%{transform:translate(6vw,48vh)}60%{transform:translate(54vw,56vh)}80%{transform:translate(68vw,8vh)}100%{transform:translate(48vw,18vh)}}
+@keyframes drift3{0%{transform:translate(28vw,58vh)}25%{transform:translate(62vw,42vh)}50%{transform:translate(18vw,16vh)}75%{transform:translate(52vw,66vh)}100%{transform:translate(28vw,58vh)}}
+@keyframes drift4{0%{transform:translate(68vw,64vh)}33%{transform:translate(18vw,76vh)}66%{transform:translate(42vw,26vh)}100%{transform:translate(68vw,64vh)}}
+
+/* ═══════════════════════════════════
+   NAV
+═══════════════════════════════════ */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:200;height:60px;
+  padding:0 clamp(16px,4vw,48px);
+  display:flex;align-items:center;justify-content:space-between;
+  background:color-mix(in srgb,var(--neu-bg) 88%,transparent);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  box-shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+.nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none; }
+.nav-logo-mark {
+  width:32px;height:32px;border-radius:10px;
+  background:var(--neu-bg);
+  box-shadow:4px 4px 10px var(--neu-shadow-dk),-3px -3px 7px var(--neu-shadow-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 25%,transparent);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:box-shadow 0.3s;
+}
+.nav-logo-mark:hover {
+  box-shadow:6px 6px 14px var(--neu-shadow-dk),-3px -3px 7px var(--neu-shadow-lt),
+             0 0 18px color-mix(in srgb,var(--primary) 20%,transparent),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 40%,transparent);
+}
+.nav-logo-text { font-weight:800;font-size:16px;letter-spacing:-0.02em; }
+.nav-logo-text span { color:var(--primary);transition:color 0.4s; }
+.nav-badge {
+  font-size:10px;font-weight:700;letter-spacing:.08em;
+  padding:3px 10px;border-radius:100px;
+  background:var(--neu-bg);
+  box-shadow:3px 3px 7px var(--neu-shadow-dk),-2px -2px 5px var(--neu-shadow-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 18%,transparent);
+  color:var(--primary);transition:color 0.4s,box-shadow 0.4s;
+}
+
+/* Switcher */
+.switcher { display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
+.sw-group {
+  display:flex;align-items:center;gap:2px;padding:4px;border-radius:12px;
+  background:var(--neu-bg);
+  box-shadow:3px 3px 8px var(--neu-shadow-dk),-2px -2px 5px var(--neu-shadow-lt);
+}
+.sw-divider { width:1px;height:18px;background:rgba(255,255,255,0.07);margin:0 3px; }
+.sw-btn {
+  padding:4px 12px;border-radius:8px;border:none;
+  background:transparent;color:rgba(255,255,255,0.35);
+  font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.03em;
+  font-family:var(--body-font);transition:all 0.18s;white-space:nowrap;
+}
+.sw-btn:hover { color:rgba(255,255,255,0.65); }
+.sw-btn.active {
+  color:var(--primary);
+  box-shadow:inset 3px 3px 7px var(--neu-inset-dk),inset -2px -2px 4px var(--neu-inset-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 18%,transparent);
+  transition: color 0.4s, box-shadow 0.4s;
+}
+
+/* ═══════════════════════════════════
+   PAGE LAYOUT
+═══════════════════════════════════ */
+main {
+  position:relative;z-index:10;
+  max-width:1100px;margin:0 auto;
+  padding:88px clamp(16px,4vw,48px) 80px;
+}
+.page-eyebrow {
+  text-align:center;font-size:11px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--primary);margin-bottom:10px;
+  transition:color 0.4s;
+}
+.page-title {
+  text-align:center;font-size:clamp(28px,4vw,48px);font-weight:900;
+  letter-spacing:-0.04em;color:#fff;margin-bottom:10px;
+}
+.page-sub {
+  text-align:center;font-size:15px;color:rgba(255,255,255,0.35);
+  font-weight:300;margin-bottom:60px;line-height:1.7;
+}
+
+/* Section headers */
+.section-label {
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-label::after {
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,0.07),transparent);
+}
+.component-row {
+  display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;
+  margin-bottom:56px;
+}
+
+/* ═══════════════════════════════════
+   NEU PANEL — base surface
+═══════════════════════════════════ */
+.neu-panel {
+  background:var(--neu-bg);border-radius:20px;
+  box-shadow:10px 10px 24px var(--neu-shadow-dk),-5px -5px 14px var(--neu-shadow-lt);
+  border:1px solid rgba(255,255,255,0.03);
+  transition:box-shadow 0.3s;
+}
+.neu-panel:hover {
+  box-shadow:14px 14px 32px var(--neu-shadow-dk),-5px -5px 14px var(--neu-shadow-lt),
+             0 0 0 1px color-mix(in srgb,var(--primary) 10%,transparent);
+}
+.neu-inset {
+  background:var(--neu-bg);border-radius:16px;
+  box-shadow:inset 4px 4px 12px var(--neu-inset-dk),inset -3px -3px 8px var(--neu-inset-lt);
+  border:1px solid rgba(255,255,255,0.02);
+}
+
+/* ═══════════════════════════════════
+   COMPONENT 1 — PILL INPUT
+   Source: garerim/bitter-donkey-79
+   Ported to Entropic neu tokens
+═══════════════════════════════════ */
+.neu-input-wrap {
+  position:relative;display:flex;align-items:center;gap:10px;
+  padding:12px 20px;border-radius:100px;
+  background:var(--neu-bg);
+  box-shadow:var(--input-shadow);
+  border:1px solid rgba(255,255,255,0.02);
+  transition:box-shadow 0.25s,border-color 0.25s;
+  width:100%;
+}
+.neu-input-wrap:focus-within {
+  box-shadow:var(--input-focus);
+  border-color:color-mix(in srgb,var(--primary) 22%,transparent);
+}
+.neu-input-wrap .input-icon {
+  width:15px;height:15px;flex-shrink:0;
+  fill:rgba(255,255,255,0.22);transition:fill 0.25s;
+}
+.neu-input-wrap:focus-within .input-icon { fill:var(--primary); }
+.neu-input-wrap input {
+  background:none;border:none;outline:none;
+  font-family:var(--body-font);font-size:14px;font-weight:400;
+  color:rgba(255,255,255,0.75);width:100%;
+  caret-color:var(--primary);
+}
+.neu-input-wrap input::placeholder { color:rgba(255,255,255,0.22); }
+
+/* Rectangular input variant */
+.neu-input-rect { border-radius:12px !important; }
+.neu-input-rect input { font-size:14px; }
+
+/* Textarea variant */
+.neu-textarea-wrap {
+  background:var(--neu-bg);border-radius:16px;
+  box-shadow:var(--input-shadow);
+  border:1px solid rgba(255,255,255,0.02);
+  padding:14px 18px;transition:box-shadow 0.25s,border-color 0.25s;
+}
+.neu-textarea-wrap:focus-within {
+  box-shadow:var(--input-focus);
+  border-color:color-mix(in srgb,var(--primary) 22%,transparent);
+}
+.neu-textarea-wrap textarea {
+  background:none;border:none;outline:none;resize:none;
+  font-family:var(--body-font);font-size:14px;font-weight:400;
+  color:rgba(255,255,255,0.75);width:100%;min-height:80px;
+  caret-color:var(--primary);line-height:1.6;
+}
+.neu-textarea-wrap textarea::placeholder { color:rgba(255,255,255,0.22); }
+
+/* Input label */
+.neu-field-group { display:flex;flex-direction:column;gap:8px;width:100%; }
+.neu-field-label {
+  font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,0.30);padding-left:6px;
+}
+.neu-field-label.focused { color:var(--primary); }
+
+/* ═══════════════════════════════════
+   COMPONENT 2 — LOGIN CARD
+   Source: yashasvi9199/silent-liger-75
+   Ported with Entropic gradient border
+═══════════════════════════════════ */
+.neu-login-outer {
+  background:var(--grad-text);
+  border-radius:26px;padding:2px;
+  box-shadow:0 0 40px color-mix(in srgb,var(--primary) 12%,transparent);
+  transition:box-shadow 0.4s;
+  width:320px;flex-shrink:0;
+}
+.neu-login-outer:hover {
+  box-shadow:0 0 60px color-mix(in srgb,var(--primary) 20%,transparent);
+}
+.neu-login-card {
+  background:var(--neu-bg);border-radius:24px;
+  padding:32px 28px 28px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.login-heading {
+  text-align:center;font-size:22px;font-weight:800;
+  letter-spacing:-0.03em;color:#fff;margin-bottom:24px;
+}
+.login-heading span {
+  background:var(--grad-text);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;
+}
+.login-fields { display:flex;flex-direction:column;gap:12px;margin-bottom:24px; }
+.login-btns {
+  display:flex;gap:10px;margin-bottom:12px;
+}
+.login-btn-forgot {
+  width:100%;padding:11px;border-radius:10px;border:none;
+  background:var(--neu-bg);
+  box-shadow:4px 4px 10px var(--neu-shadow-dk),-3px -3px 7px var(--neu-shadow-lt);
+  color:rgba(255,255,255,0.35);font-size:13px;font-weight:500;
+  cursor:pointer;font-family:var(--body-font);
+  transition:all 0.2s;
+}
+.login-btn-forgot:hover {
+  color:rgba(255,165,0,0.8);
+  box-shadow:5px 5px 12px var(--neu-shadow-dk),-3px -3px 7px var(--neu-shadow-lt),
+             inset 0 0 0 1px rgba(255,165,0,0.15);
+}
+
+/* ═══════════════════════════════════
+   COMPONENT 3 — SPARKLE BUTTON
+   Source: MuhammadHasann/mean-bird-62
+   Ported with neu extrusion + primary glow
+═══════════════════════════════════ */
+.neu-sparkle-btn {
+  --active: 0;
+  position:relative;display:inline-flex;align-items:center;gap:10px;
+  padding:14px 28px;border:none;border-radius:100px;
+  background:var(--neu-bg);cursor:pointer;
+  font-family:var(--body-font);font-size:14px;font-weight:600;
+  transform-origin:center;
+  transform:scale(calc(1 + var(--active) * 0.04));
+  transition:transform 0.3s ease-in-out,box-shadow 0.3s ease-in-out;
+  box-shadow:
+    6px 6px 14px var(--neu-shadow-dk),
+    -4px -4px 10px var(--neu-shadow-lt),
+    0 0 0 calc(var(--active) * 6px) color-mix(in srgb,var(--primary) 22%,transparent);
+  outline:none;
+}
+.neu-sparkle-btn:hover,
+.neu-sparkle-btn:focus-visible { --active:1; }
+.neu-sparkle-btn:active {
+  --active:0;
+  box-shadow:
+    inset 4px 4px 10px var(--neu-inset-dk),
+    inset -2px -2px 6px var(--neu-inset-lt);
+  transform:scale(0.98);
+}
+
+/* Rotating border ring */
+.neu-sparkle-btn .dots-ring {
+  position:absolute;inset:-2px;border-radius:100px;overflow:hidden;
+  opacity:var(--active);transition:opacity 0.3s;pointer-events:none;
+  z-index:-1;
+}
+.neu-sparkle-btn .dots-ring::before {
+  content:'';position:absolute;top:30%;left:50%;
+  width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);
+  transform-origin:left center;transform:rotate(0deg);
+  animation:ring-rotate 2s linear infinite;
+  mask:linear-gradient(transparent 0%,white 80%);
+}
+@keyframes ring-rotate { to { transform:rotate(360deg); } }
+
+/* Glow fill layer on hover */
+.neu-sparkle-btn .btn-glow-fill {
+  position:absolute;inset:0;border-radius:100px;pointer-events:none;
+  background:radial-gradient(
+    ellipse at 50% 110%,
+    color-mix(in srgb,var(--primary) 18%,transparent) 0%,
+    transparent 70%
+  );
+  opacity:var(--active);
+  transition:opacity 0.3s;
+  z-index:0;
+}
+
+/* Sparkle SVG icon */
+.sparkle-icon {
+  width:18px;height:18px;position:relative;z-index:2;flex-shrink:0;
+  color:var(--primary);transition:color 0.3s;
+}
+.neu-sparkle-btn:hover .sparkle-icon { animation:sparkle-pulse 1.4s linear 0.3s infinite; }
+@keyframes sparkle-pulse {
+  0%,34%,71%,100%{transform:scale(1)}
+  17%{transform:scale(1.3) rotate(15deg)}
+  49%{transform:scale(0.85) rotate(-10deg)}
+  83%{transform:scale(1.2) rotate(5deg)}
+}
+
+/* Button text */
+.btn-label {
+  position:relative;z-index:2;
+  background:linear-gradient(
+    90deg,
+    rgba(255,255,255,0.88) 0%,
+    color-mix(in srgb,var(--primary) 80%,rgba(255,255,255,0.88)) calc(var(--active)*100%)
+  );
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  transition:background 0.3s;
+}
+
+/* Variants */
+.neu-sparkle-btn.ghost {
+  box-shadow:
+    4px 4px 10px var(--neu-shadow-dk),
+    -3px -3px 7px var(--neu-shadow-lt),
+    inset 0 0 0 1px rgba(255,255,255,0.07),
+    0 0 0 calc(var(--active) * 5px) color-mix(in srgb,var(--primary) 16%,transparent);
+}
+.neu-sparkle-btn.ghost:active {
+  box-shadow:inset 3px 3px 8px var(--neu-inset-dk),inset -2px -2px 5px var(--neu-inset-lt);
+}
+.neu-sparkle-btn.lg { padding:16px 36px;font-size:15px; }
+.neu-sparkle-btn.sm { padding:9px 18px;font-size:12px; }
+.neu-sparkle-btn.sm .sparkle-icon { width:13px;height:13px; }
+
+/* ═══════════════════════════════════
+   COMPONENT 4 — NEU CARD
+   Source: Yaseen549/chilly-dragon-64
+   Ported with Entropic content + tokens
+═══════════════════════════════════ */
+.neu-card {
+  background:var(--neu-bg);
+  border-radius:24px;
+  box-shadow:
+    15px 15px 32px var(--neu-shadow-dk),
+    -8px -8px 20px var(--neu-shadow-lt);
+  border:1px solid rgba(255,255,255,0.025);
+  transition:box-shadow 0.3s,transform 0.3s;
+  overflow:hidden;cursor:default;
+}
+.neu-card:hover {
+  transform:translateY(-4px);
+  box-shadow:
+    20px 20px 40px var(--neu-shadow-dk),
+    -8px -8px 20px var(--neu-shadow-lt),
+    0 0 0 1px color-mix(in srgb,var(--primary) 12%,transparent);
+}
+/* Card top accent bar */
+.neu-card-bar {
+  height:3px;width:100%;
+  background:var(--grad-text);
+  transition:background 0.4s;
+}
+.neu-card-body { padding:24px; }
+.neu-card-icon {
+  width:44px;height:44px;border-radius:14px;margin-bottom:16px;
+  background:var(--neu-bg);
+  box-shadow:5px 5px 12px var(--neu-shadow-dk),-4px -4px 9px var(--neu-shadow-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 18%,transparent);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  transition:box-shadow 0.3s;
+}
+.neu-card:hover .neu-card-icon {
+  box-shadow:6px 6px 14px var(--neu-shadow-dk),-4px -4px 9px var(--neu-shadow-lt),
+             0 0 20px color-mix(in srgb,var(--primary) 18%,transparent),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 35%,transparent);
+}
+.neu-card-title {
+  font-size:15px;font-weight:700;letter-spacing:-0.01em;
+  color:rgba(255,255,255,0.88);margin-bottom:8px;
+}
+.neu-card-desc {
+  font-size:13px;font-weight:300;line-height:1.7;
+  color:rgba(255,255,255,0.38);margin-bottom:20px;
+}
+.neu-card-footer {
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,0.04);
+}
+.neu-card-stat {
+  font-size:11px;font-weight:600;letter-spacing:.04em;
+  color:rgba(255,255,255,0.25);
+}
+.neu-card-stat span { color:var(--primary);transition:color 0.4s; }
+/* Card chip */
+.neu-chip {
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:100px;
+  background:var(--neu-bg);
+  box-shadow:2px 2px 6px var(--neu-shadow-dk),-2px -2px 4px var(--neu-shadow-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 16%,transparent);
+  color:var(--primary);transition:color 0.4s,box-shadow 0.4s;
+}
+/* Card grid */
+.card-grid {
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+/* ═══════════════════════════════════
+   BONUS — NEU TOGGLE SWITCH
+═══════════════════════════════════ */
+.neu-toggle-wrap { display:flex;align-items:center;gap:14px; }
+.neu-toggle-label { font-size:13px;font-weight:500;color:rgba(255,255,255,0.45); }
+.neu-toggle {
+  position:relative;width:52px;height:28px;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+  background:var(--neu-bg);border-radius:100px;border:none;
+  box-shadow:inset 4px 4px 10px var(--neu-inset-dk),inset -3px -3px 7px var(--neu-inset-lt);
+  transition:box-shadow 0.3s;outline:none;flex-shrink:0;
+}
+.neu-toggle::before {
+  content:'';position:absolute;top:4px;left:4px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,0.20);
+  box-shadow:2px 2px 5px rgba(0,0,0,0.5),-1px -1px 3px rgba(255,255,255,0.04);
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1),background 0.3s,box-shadow 0.3s;
+}
+.neu-toggle:checked::before {
+  transform:translateX(24px);
+  background:var(--primary);
+  box-shadow:0 0 12px color-mix(in srgb,var(--primary) 50%,transparent),
+             2px 2px 5px rgba(0,0,0,0.4);
+}
+.neu-toggle:checked {
+  box-shadow:inset 4px 4px 10px var(--neu-inset-dk),inset -3px -3px 7px var(--neu-inset-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 22%,transparent);
+}
+.neu-toggle:focus-visible {
+  box-shadow:inset 4px 4px 10px var(--neu-inset-dk),inset -3px -3px 7px var(--neu-inset-lt),
+             0 0 0 2px color-mix(in srgb,var(--primary) 35%,transparent);
+}
+
+/* ═══════════════════════════════════
+   BONUS — NEU STAT TILE
+═══════════════════════════════════ */
+.neu-stat {
+  background:var(--neu-bg);border-radius:20px;padding:22px;
+  box-shadow:10px 10px 24px var(--neu-shadow-dk),-5px -5px 14px var(--neu-shadow-lt);
+  border:1px solid rgba(255,255,255,0.025);
+  display:flex;flex-direction:column;gap:6px;
+  transition:box-shadow 0.3s;
+}
+.neu-stat:hover {
+  box-shadow:14px 14px 30px var(--neu-shadow-dk),-5px -5px 14px var(--neu-shadow-lt),
+             0 0 0 1px color-mix(in srgb,var(--primary) 10%,transparent);
+}
+.neu-stat-label { font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.25); }
+.neu-stat-value { font-size:28px;font-weight:800;letter-spacing:-0.04em;color:rgba(255,255,255,0.88); }
+.neu-stat-delta {
+  font-size:12px;font-weight:600;letter-spacing:.02em;
+  display:flex;align-items:center;gap:4px;
+}
+.delta-up   { color:#34d399; }
+.delta-down { color:#f87171; }
+/* Progress bar */
+.neu-progress-track {
+  height:6px;border-radius:100px;margin-top:10px;
+  background:var(--neu-bg);
+  box-shadow:inset 2px 2px 5px var(--neu-inset-dk),inset -1px -1px 3px var(--neu-inset-lt);
+}
+.neu-progress-fill {
+  height:100%;border-radius:100px;
+  background:var(--grad-text);
+  box-shadow:0 0 8px color-mix(in srgb,var(--primary) 40%,transparent);
+  transition:width 0.6s cubic-bezier(.34,1.2,.64,1),background 0.4s;
+}
+
+/* ═══════════════════════════════════
+   PRIMARY NEU BUTTON (standalone)
+═══════════════════════════════════ */
+.neu-btn {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border:none;border-radius:100px;
+  background:var(--neu-bg);cursor:pointer;
+  font-family:var(--body-font);font-size:14px;font-weight:600;
+  color:rgba(255,255,255,0.60);
+  box-shadow:6px 6px 14px var(--neu-shadow-dk),-4px -4px 10px var(--neu-shadow-lt);
+  transition:all 0.2s;outline:none;
+}
+.neu-btn:hover {
+  color:rgba(255,255,255,0.85);
+  box-shadow:8px 8px 18px var(--neu-shadow-dk),-4px -4px 10px var(--neu-shadow-lt);
+}
+.neu-btn:active {
+  box-shadow:inset 4px 4px 10px var(--neu-inset-dk),inset -2px -2px 6px var(--neu-inset-lt);
+  transform:scale(0.98);
+}
+.neu-btn-primary {
+  color:var(--primary);
+  box-shadow:6px 6px 14px var(--neu-shadow-dk),-4px -4px 10px var(--neu-shadow-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 18%,transparent);
+  transition:color 0.4s, box-shadow 0.3s;
+}
+.neu-btn-primary:hover {
+  box-shadow:8px 8px 20px var(--neu-shadow-dk),-4px -4px 10px var(--neu-shadow-lt),
+             0 0 22px color-mix(in srgb,var(--primary) 18%,transparent),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 32%,transparent);
+}
+.neu-btn-primary:active {
+  box-shadow:inset 4px 4px 10px var(--neu-inset-dk),inset -2px -2px 6px var(--neu-inset-lt),
+             inset 0 0 0 1px color-mix(in srgb,var(--primary) 22%,transparent);
+  transform:scale(0.98);
+}
+/* Solarstorm + Unstained: dark text on light primary */
+body.theme-solarstorm .neu-btn-primary,
+body.theme-solarstorm .btn-label { color:#000 !important;-webkit-text-fill-color:#000 !important; }
+body.theme-unstained .neu-btn-primary { color:#08080a !important; }
+
+/* ═══════════════════════════════════
+   UTILITY
+═══════════════════════════════════ */
+.flex-gap { display:flex;gap:12px;flex-wrap:wrap;align-items:center; }
+.flex-col  { display:flex;flex-direction:column;gap:12px; }
+.w-full    { width:100%; }
+.w-300     { width:300px; }
+.mt-4      { margin-top:4px; }
+.text-dim  { color:rgba(255,255,255,0.28);font-size:12px;font-weight:400; }
+</style>
+</head>
+
+<body class="theme-entropic">
+
+<!-- BG ORBS -->
+<div id="bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2" style="top:15%;right:-8%"></div>
+  <div class="orb orb-3" style="bottom:12%;left:18%"></div>
+  <div class="orb orb-4" style="bottom:22%;right:22%"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">⚡</div>
+    <span class="nav-logo-text">Entropic<span>UI</span></span>
+  </a>
+  <div class="nav-badge">NEUMORPHIC KIT</div>
+  <div class="switcher">
+    <div class="sw-group">
+      <button class="sw-btn active" data-theme="entropic">Entropic</button>
+      <button class="sw-btn"        data-theme="cherry">Cherry</button>
+      <button class="sw-btn"        data-theme="jungle">Jungle</button>
+      <button class="sw-btn"        data-theme="cobalt">Cobalt</button>
+      <button class="sw-btn"        data-theme="solarstorm">Solar</button>
+      <button class="sw-btn"        data-theme="unstained">Unstained</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <p class="page-eyebrow">COMPONENT LIBRARY</p>
+  <h1 class="page-title">Neumorphic Components</h1>
+  <p class="page-sub">Four source components, ported and extended into the Entropic token system.<br/>All six themes. All shadow depths driven by CSS custom properties.</p>
+
+  <!-- ─── 1. INPUTS ─── -->
+  <div class="section-label">01 — Inputs &amp; Fields</div>
+  <div class="component-row" style="flex-direction:column;max-width:400px;">
+
+    <div class="neu-field-group">
+      <label class="neu-field-label" id="lbl-user">Username</label>
+      <div class="neu-input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        <input type="text" placeholder="Enter username" aria-labelledby="lbl-user"
+               onfocus="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.add('focused')"
+               onblur="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.remove('focused')"/>
+      </div>
+    </div>
+
+    <div class="neu-field-group">
+      <label class="neu-field-label" id="lbl-pass">Password</label>
+      <div class="neu-input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/></svg>
+        <input type="password" placeholder="Enter password" aria-labelledby="lbl-pass"
+               onfocus="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.add('focused')"
+               onblur="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.remove('focused')"/>
+      </div>
+    </div>
+
+    <div class="neu-field-group">
+      <label class="neu-field-label" id="lbl-search">Search</label>
+      <div class="neu-input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <input type="search" placeholder="Search anything…" aria-labelledby="lbl-search"
+               onfocus="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.add('focused')"
+               onblur="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.remove('focused')"/>
+      </div>
+    </div>
+
+    <div class="neu-field-group">
+      <label class="neu-field-label" id="lbl-msg">Message</label>
+      <div class="neu-textarea-wrap"
+           onfocusin="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.add('focused')"
+           onfocusout="this.closest('.neu-field-group').querySelector('.neu-field-label').classList.remove('focused')">
+        <textarea placeholder="Write something…" aria-labelledby="lbl-msg"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── 2. LOGIN CARD ─── -->
+  <div class="section-label">02 — Login Card</div>
+  <div class="component-row">
+    <div class="neu-login-outer">
+      <div class="neu-login-card">
+        <div class="login-heading"><span>Sign In</span></div>
+        <div class="login-fields">
+          <div class="neu-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <input type="email" placeholder="Email address"/>
+          </div>
+          <div class="neu-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/></svg>
+            <input type="password" placeholder="Password"/>
+          </div>
+        </div>
+        <div class="login-btns">
+          <button class="neu-btn neu-btn-primary w-full">Sign In</button>
+          <button class="neu-btn w-full">Register</button>
+        </div>
+        <button class="login-btn-forgot">Forgot password?</button>
+      </div>
+    </div>
+
+    <!-- Register variant -->
+    <div class="neu-login-outer" style="background:linear-gradient(135deg,var(--accent3),var(--primary));">
+      <div class="neu-login-card">
+        <div class="login-heading" style="margin-bottom:8px;"><span>Create Account</span></div>
+        <p class="text-dim" style="text-align:center;margin-bottom:20px;">Join the Entropic ecosystem</p>
+        <div class="login-fields">
+          <div class="neu-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            <input type="text" placeholder="Full name"/>
+          </div>
+          <div class="neu-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <input type="email" placeholder="Email address"/>
+          </div>
+          <div class="neu-input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/></svg>
+            <input type="password" placeholder="Choose password"/>
+          </div>
+        </div>
+        <button class="neu-btn neu-btn-primary w-full">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 3. SPARKLE BUTTONS ─── -->
+  <div class="section-label">03 — Sparkle Buttons</div>
+  <div class="component-row flex-gap" style="margin-bottom:20px;">
+
+    <button class="neu-sparkle-btn lg">
+      <div class="dots-ring"></div>
+      <div class="btn-glow-fill"></div>
+      <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+      </svg>
+      <span class="btn-label">Generate</span>
+    </button>
+
+    <button class="neu-sparkle-btn">
+      <div class="dots-ring"></div>
+      <div class="btn-glow-fill"></div>
+      <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+      <span class="btn-label">Execute</span>
+    </button>
+
+    <button class="neu-sparkle-btn ghost">
+      <div class="dots-ring"></div>
+      <div class="btn-glow-fill"></div>
+      <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+      </svg>
+      <span class="btn-label">Schedule</span>
+    </button>
+
+    <button class="neu-sparkle-btn sm">
+      <div class="dots-ring"></div>
+      <div class="btn-glow-fill"></div>
+      <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+      <span class="btn-label">Continue</span>
+    </button>
+
+  </div>
+
+  <!-- Button row — standard neu variants -->
+  <div class="flex-gap" style="margin-bottom:56px;">
+    <button class="neu-btn neu-btn-primary">Primary</button>
+    <button class="neu-btn">Default</button>
+    <button class="neu-btn" style="border-radius:10px;">Rect</button>
+    <button class="neu-btn" style="color:rgba(255,100,100,0.7);box-shadow:6px 6px 14px var(--neu-shadow-dk),-4px -4px 10px var(--neu-shadow-lt),inset 0 0 0 1px rgba(255,80,80,0.15);">Danger</button>
+    <div class="neu-toggle-wrap">
+      <input type="checkbox" class="neu-toggle" id="t1" checked/>
+      <label class="neu-toggle-label" for="t1">Active</label>
+    </div>
+    <div class="neu-toggle-wrap">
+      <input type="checkbox" class="neu-toggle" id="t2"/>
+      <label class="neu-toggle-label" for="t2">Disabled</label>
+    </div>
+  </div>
+
+  <!-- ─── 4. NEU CARDS ─── -->
+  <div class="section-label">04 — Content Cards</div>
+  <div class="card-grid" style="margin-bottom:40px;">
+
+    <div class="neu-card">
+      <div class="neu-card-bar"></div>
+      <div class="neu-card-body">
+        <div class="neu-card-icon">⚡</div>
+        <div class="neu-card-title">Entropic Engine</div>
+        <div class="neu-card-desc">Zero-dependency CSS token system. 15 theme × style combinations from a single source of truth.</div>
+        <div class="neu-card-footer">
+          <span class="neu-card-stat">Components <span>47</span></span>
+          <span class="neu-chip">v3.1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="neu-card">
+      <div class="neu-card-bar" style="background:linear-gradient(90deg,var(--accent3),var(--primary));"></div>
+      <div class="neu-card-body">
+        <div class="neu-card-icon">◈</div>
+        <div class="neu-card-title">Shadow Physics</div>
+        <div class="neu-card-desc">Bilateral shadows driven by theme-keyed dark/light tokens. Depth responds to every palette automatically.</div>
+        <div class="neu-card-footer">
+          <span class="neu-card-stat">Themes <span>6</span></span>
+          <span class="neu-chip">Neu</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="neu-card">
+      <div class="neu-card-bar" style="background:linear-gradient(90deg,var(--accent2),var(--accent3));"></div>
+      <div class="neu-card-body">
+        <div class="neu-card-icon">⬡</div>
+        <div class="neu-card-title">Token Architecture</div>
+        <div class="neu-card-desc">CSS custom properties drive every shadow depth, glow, and surface. Swap themes without touching component CSS.</div>
+        <div class="neu-card-footer">
+          <span class="neu-card-stat">Tokens <span>28</span></span>
+          <span class="neu-chip">CSS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="neu-card">
+      <div class="neu-card-bar" style="background:linear-gradient(90deg,var(--primary),var(--accent2));"></div>
+      <div class="neu-card-body">
+        <div class="neu-card-icon">◉</div>
+        <div class="neu-card-title">Pressed States</div>
+        <div class="neu-card-desc">Every interactive element has a physically convincing inset press state. Buttons push in. Fields sink down.</div>
+        <div class="neu-card-footer">
+          <span class="neu-card-stat">States <span>4</span></span>
+          <span class="neu-chip">Active</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── STAT TILES ─── -->
+  <div class="section-label">05 — Stat Tiles</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:56px;">
+
+    <div class="neu-stat">
+      <div class="neu-stat-label">Monthly Revenue</div>
+      <div class="neu-stat-value">$48.2K</div>
+      <div class="neu-stat-delta delta-up">↑ 12.4% vs last month</div>
+      <div class="neu-progress-track"><div class="neu-progress-fill" style="width:72%"></div></div>
+    </div>
+
+    <div class="neu-stat">
+      <div class="neu-stat-label">Active Users</div>
+      <div class="neu-stat-value">9,340</div>
+      <div class="neu-stat-delta delta-up">↑ 8.1% this week</div>
+      <div class="neu-progress-track"><div class="neu-progress-fill" style="width:58%"></div></div>
+    </div>
+
+    <div class="neu-stat">
+      <div class="neu-stat-label">Churn Rate</div>
+      <div class="neu-stat-value">2.3%</div>
+      <div class="neu-stat-delta delta-down">↓ 0.4% vs target</div>
+      <div class="neu-progress-track"><div class="neu-progress-fill" style="width:23%"></div></div>
+    </div>
+
+    <div class="neu-stat">
+      <div class="neu-stat-label">Components</div>
+      <div class="neu-stat-value">47</div>
+      <div class="neu-stat-delta delta-up">↑ 4 new this release</div>
+      <div class="neu-progress-track"><div class="neu-progress-fill" style="width:90%"></div></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════
+   THEME TOKENS
+═══════════════════════════════════ */
+const THEMES = {
+  entropic: {
+    '--primary':'#03ff6c','--accent1':'#7cfc19','--accent2':'#ffa805','--accent3':'#5b0af2',
+    '--grad-text':'linear-gradient(135deg,#03ff6c 0%,#7cfc19 40%,#c4fc19 70%,#ffa805 100%)',
+    '--orb1':'rgba(3,255,108,0.18)','--orb2':'rgba(91,10,242,0.22)','--orb3':'rgba(255,168,5,0.12)','--orb4':'rgba(196,252,25,0.10)',
+    '--neu-bg':'#0d1420','--neu-shadow-dk':'rgba(0,0,0,0.72)','--neu-shadow-lt':'rgba(3,255,108,0.035)',
+    '--neu-inset-dk':'rgba(0,0,0,0.55)','--neu-inset-lt':'rgba(3,255,108,0.030)','--neu-border':'rgba(3,255,108,0.10)',
+    '--input-shadow':'inset 4px 4px 10px rgba(0,0,0,0.65),inset -2px -2px 6px rgba(3,255,108,0.03)',
+    '--input-focus':'0 0 0 2px rgba(3,255,108,0.25),inset 4px 4px 10px rgba(0,0,0,0.65)',
+    bg:'#0d1420',
+  },
+  cherry: {
+    '--primary':'#ff0066','--accent1':'#ff8c00','--accent2':'#00ffaa','--accent3':'#ff44aa',
+    '--grad-text':'linear-gradient(135deg,#ff0066 0%,#ff4488 30%,#ff8c00 70%,#ffb300 100%)',
+    '--orb1':'rgba(255,0,102,0.20)','--orb2':'rgba(255,140,0,0.16)','--orb3':'rgba(0,255,170,0.12)','--orb4':'rgba(255,68,136,0.10)',
+    '--neu-bg':'#160810','--neu-shadow-dk':'rgba(0,0,0,0.75)','--neu-shadow-lt':'rgba(255,0,102,0.04)',
+    '--neu-inset-dk':'rgba(0,0,0,0.60)','--neu-inset-lt':'rgba(255,0,102,0.028)','--neu-border':'rgba(255,0,102,0.12)',
+    '--input-shadow':'inset 4px 4px 10px rgba(0,0,0,0.65),inset -2px -2px 6px rgba(255,0,102,0.025)',
+    '--input-focus':'0 0 0 2px rgba(255,0,102,0.28),inset 4px 4px 10px rgba(0,0,0,0.65)',
+    bg:'#160810',
+  },
+  jungle: {
+    '--primary':'#aaff00','--accent1':'#00e066','--accent2':'#00ffcc','--accent3':'#f71e5b',
+    '--grad-text':'linear-gradient(135deg,#aaff00 0%,#66ff33 45%,#00ffcc 80%,#00e0aa 100%)',
+    '--orb1':'rgba(170,255,0,0.16)','--orb2':'rgba(247,30,91,0.20)','--orb3':'rgba(0,255,204,0.13)','--orb4':'rgba(0,224,102,0.11)',
+    '--neu-bg':'#081408','--neu-shadow-dk':'rgba(0,0,0,0.75)','--neu-shadow-lt':'rgba(170,255,0,0.04)',
+    '--neu-inset-dk':'rgba(0,0,0,0.60)','--neu-inset-lt':'rgba(170,255,0,0.028)','--neu-border':'rgba(170,255,0,0.10)',
+    '--input-shadow':'inset 4px 4px 10px rgba(0,0,0,0.65),inset -2px -2px 6px rgba(170,255,0,0.02)',
+    '--input-focus':'0 0 0 2px rgba(170,255,0,0.26),inset 4px 4px 10px rgba(0,0,0,0.65)',
+    bg:'#081408',
+  },
+  cobalt: {
+    '--primary':'#0088ff','--accent1':'#ffdd00','--accent2':'#ff2200','--accent3':'#8800ff',
+    '--grad-text':'linear-gradient(135deg,#0066ff 0%,#3344ff 35%,#6633ff 65%,#8800cc 88%,#0099ff 100%)',
+    '--orb1':'rgba(0,102,255,0.24)','--orb2':'rgba(136,0,255,0.20)','--orb3':'rgba(0,153,255,0.14)','--orb4':'rgba(102,51,255,0.16)',
+    '--neu-bg':'#060d1a','--neu-shadow-dk':'rgba(0,0,0,0.78)','--neu-shadow-lt':'rgba(0,102,255,0.05)',
+    '--neu-inset-dk':'rgba(0,0,0,0.65)','--neu-inset-lt':'rgba(0,136,255,0.032)','--neu-border':'rgba(0,136,255,0.12)',
+    '--input-shadow':'inset 4px 4px 10px rgba(0,0,0,0.68),inset -2px -2px 6px rgba(0,136,255,0.03)',
+    '--input-focus':'0 0 0 2px rgba(0,136,255,0.30),inset 4px 4px 10px rgba(0,0,0,0.68)',
+    bg:'#060d1a',
+  },
+  solarstorm: {
+    '--primary':'#fbff03','--accent1':'#e2ff03','--accent2':'#ffffff','--accent3':'#33332f',
+    '--grad-text':'linear-gradient(135deg,#fbff03 0%,#e2ff03 50%,#ffffff 100%)',
+    '--orb1':'rgba(251,255,3,0.16)','--orb2':'rgba(226,255,3,0.12)','--orb3':'rgba(255,255,255,0.06)','--orb4':'rgba(251,255,3,0.09)',
+    '--neu-bg':'#141200','--neu-shadow-dk':'rgba(0,0,0,0.80)','--neu-shadow-lt':'rgba(251,255,3,0.045)',
+    '--neu-inset-dk':'rgba(0,0,0,0.65)','--neu-inset-lt':'rgba(251,255,3,0.032)','--neu-border':'rgba(251,255,3,0.14)',
+    '--input-shadow':'inset 4px 4px 10px rgba(0,0,0,0.70),inset -2px -2px 6px rgba(251,255,3,0.03)',
+    '--input-focus':'0 0 0 2px rgba(251,255,3,0.28),inset 4px 4px 10px rgba(0,0,0,0.70)',
+    bg:'#141200',
+  },
+  unstained: {
+    '--primary':'#f4f4f5','--accent1':'#cfd8e7','--accent2':'#a8aebc','--accent3':'#2e3440',
+    '--grad-text':'linear-gradient(135deg,#ffffff 0%,#f4f4f5 25%,#cfd8e7 60%,#a8aebc 100%)',
+    '--orb1':'rgba(207,216,231,0.06)','--orb2':'rgba(168,174,188,0.07)','--orb3':'rgba(232,229,220,0.05)','--orb4':'rgba(46,52,64,0.65)',
+    '--neu-bg':'#1c1d22','--neu-shadow-dk':'rgba(3,13,22,0.88)','--neu-shadow-lt':'rgba(207,216,231,0.04)',
+    '--neu-inset-dk':'rgba(3,13,22,0.72)','--neu-inset-lt':'rgba(207,216,231,0.028)','--neu-border':'rgba(207,216,231,0.10)',
+    '--input-shadow':'inset 4px 4px 10px rgba(3,13,22,0.80),inset -2px -2px 6px rgba(207,216,231,0.025)',
+    '--input-focus':'0 0 0 2px rgba(207,216,231,0.20),inset 4px 4px 10px rgba(3,13,22,0.80)',
+    bg:'#1c1d22',
+  },
+};
+
+function applyTheme(name) {
+  const t = THEMES[name]; if(!t) return;
+  const root = document.documentElement;
+  Object.entries(t).forEach(([k,v]) => { if(k !== 'bg') root.style.setProperty(k, v); });
+  document.body.style.background = t.bg;
+  document.body.className = 'theme-' + name;
+  document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+}
+
+document.querySelectorAll('[data-theme]').forEach(btn =>
+  btn.addEventListener('click', () => applyTheme(btn.dataset.theme))
+);
+
+applyTheme('entropic');
+</script>
+</body>
+</html>

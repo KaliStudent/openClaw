@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Component Lab — See Your Stylesheet Come Alive</title>
+    <meta name="description" content="Paste any CSS stylesheet and instantly see it applied to real UI components. Edit live, learn visually.">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+    <!-- LANDING / PASTE VIEW -->
+    <div id="landing-view" class="view view--active">
+        <div class="landing">
+            <div class="landing__header">
+                <h1 class="landing__title">CSS Component <span class="landing__accent">Lab</span></h1>
+                <p class="landing__subtitle">Paste your stylesheet. See it on real components. Edit live.</p>
+            </div>
+
+            <div class="landing__input-area">
+                <div class="landing__tabs">
+                    <button class="landing__tab landing__tab--active" data-target="css-input">Paste CSS</button>
+                    <button class="landing__tab" data-target="url-input">From URL</button>
+                </div>
+
+                <div id="css-input" class="landing__panel landing__panel--active">
+                    <textarea id="css-paste" class="landing__textarea" placeholder="/* Paste your full CSS stylesheet here... */
+
+:root {
+    --primary: #0066ff;
+    --bg: #0a0a0a;
+    --text: #e0e0e0;
+    --radius: 8px;
+}
+
+.btn {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+}
+
+.card {
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+/* ...paste your entire stylesheet */
+" spellcheck="false"></textarea>
+                </div>
+
+                <div id="url-input" class="landing__panel">
+                    <input type="url" id="css-url" class="landing__url-input" placeholder="https://example.com/styles.css">
+                </div>
+
+                <button id="render-btn" class="landing__render-btn">
+                    <span class="landing__render-icon">▶</span>
+                    Build Components
+                </button>
+            </div>
+
+            <div class="landing__features">
+                <div class="landing__feature">
+                    <span class="landing__feature-icon">📋</span>
+                    <span>Paste any stylesheet</span>
+                </div>
+                <div class="landing__feature">
+                    <span class="landing__feature-icon">🧩</span>
+                    <span>20+ auto-built components</span>
+                </div>
+                <div class="landing__feature">
+                    <span class="landing__feature-icon">⚡</span>
+                    <span>Live editing with instant preview</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE VIEW -->
+    <div id="workspace-view" class="view">
+        <div class="workspace">
+
+            <!-- Sidebar: Component List -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar__header">
+                    <h2 class="sidebar__title">Components</h2>
+                    <button class="sidebar__back-btn" id="back-btn" title="Back to paste">←</button>
+                </div>
+                <div class="sidebar__list" id="component-list">
+                    <!-- Populated by JS -->
+                </div>
+            </aside>
+
+            <!-- Main Workspace: Split Pane -->
+            <div class="main-area">
+
+                <!-- Code Editor Pane -->
+                <div class="pane pane--editor" id="editor-pane">
+                    <div class="pane__tabs" id="editor-tabs">
+                        <button class="pane__tab pane__tab--active" data-lang="html">HTML</button>
+                        <button class="pane__tab" data-lang="css">CSS</button>
+                        <button class="pane__tab pane__tab--hidden" data-lang="js">JS</button>
+                    </div>
+                    <div class="pane__editor-wrap">
+                        <textarea id="code-editor" class="pane__editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+
+                <!-- Resize Handle -->
+                <div class="resize-handle" id="resize-handle"></div>
+
+                <!-- Preview Pane -->
+                <div class="pane pane--preview" id="preview-pane">
+                    <div class="pane__toolbar">
+                        <span class="pane__toolbar-label">Preview</span>
+                        <div class="pane__toolbar-actions">
+                            <button class="pane__toolbar-btn" id="preview-bg-toggle" title="Toggle background">◐</button>
+                            <button class="pane__toolbar-btn" id="preview-reset" title="Reset changes">↺</button>
+                        </div>
+                    </div>
+                    <iframe id="preview-frame" class="pane__iframe"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="js/css-parser.js"></script>
+    <script src="js/component-library.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
