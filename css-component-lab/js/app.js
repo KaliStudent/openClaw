@@ -75,14 +75,14 @@ const App = (function () {
             }
         });
 
-        // Editor input — throttled to max 1 render per 400ms
+        // Editor input — wait 1 second after last keystroke before updating preview
         let editTimer = null;
         els.codeEditor.addEventListener('input', function () {
             if (editTimer) clearTimeout(editTimer);
             editTimer = setTimeout(function () {
                 editorContent[activeTab] = els.codeEditor.value;
                 scheduleRender();
-            }, 400);
+            }, 1000);
         });
 
         // Tab key support
