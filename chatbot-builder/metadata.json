@@ -1,6 +1,0 @@
-{
-  "name": "Customer Service Chatbot Builder",
-  "description": "An interactive chatbot builder and simulator allowing businesses to configure custom assistants, upload knowledge bases via CSV, and preview support chats powered by Gemini AI.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
