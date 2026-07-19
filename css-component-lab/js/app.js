@@ -1,20 +1,29 @@
 /**
  * CSS Component Lab — Main Application Controller
- * Uses srcdoc for safe iframe rendering, throttled updates
+ * 
+ * Flow:
+ * 1. User pastes CSS on landing page
+ * 2. Workspace loads with components in sidebar
+ * 3. Selecting a component shows:
+ *    - HTML tab: the component's HTML (editable)
+ *    - CSS tab: the USER's CSS (editable — this is what they're here to tweak)
+ *    - JS tab: component JS if needed (editable)
+ * 4. Preview shows: component HTML + component base CSS + user CSS on top
+ * 5. Edits in CSS tab update the user CSS and re-render after 1s pause
  */
 
 const App = (function () {
     'use strict';
 
     // State
-    let userCSS = '';
+    let userCSS = '';           // The CSS the user pasted (editable via CSS tab)
     let parsedCSS = null;
     let currentComponent = null;
-    let editorContent = { html: '', css: '', js: '' };
+    let componentHTML = '';     // Current component's HTML (editable via HTML tab)
+    let componentJS = '';      // Current component's JS (editable via JS tab)
     let activeTab = 'html';
     let previewDarkBg = false;
     let renderPending = false;
-    let renderRAF = null;
 
     // DOM cache
     const $ = (sel) => document.querySelector(sel);
@@ -46,13 +55,13 @@ const App = (function () {
         cacheElements();
 
         // Landing tabs
-        $$('.landing__tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.dataset.target;
-                $$('.landing__tab').forEach(t => t.classList.remove('landing__tab--active'));
+        $$('.landing__tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var target = tab.dataset.target;
+                $$('.landing__tab').forEach(function (t) { t.classList.remove('landing__tab--active'); });
                 tab.classList.add('landing__tab--active');
-                $$('.landing__panel').forEach(p => p.classList.remove('landing__panel--active'));
-                const panel = document.getElementById(target);
+                $$('.landing__panel').forEach(function (p) { p.classList.remove('landing__panel--active'); });
+                var panel = document.getElementById(target);
                 if (panel) panel.classList.add('landing__panel--active');
             });
         });
@@ -65,50 +74,50 @@ const App = (function () {
 
         // Editor tabs (delegated)
         els.editorTabs.addEventListener('click', function (e) {
-            const tab = e.target.closest('.pane__tab');
+            var tab = e.target.closest('.pane__tab');
             if (tab && !tab.classList.contains('pane__tab--hidden')) {
-                // Save current
-                editorContent[activeTab] = els.codeEditor.value;
-                activeTab = tab.dataset.lang;
-                updateTabUI();
-                els.codeEditor.value = editorContent[activeTab] || '';
+                switchTab(tab.dataset.lang);
             }
         });
 
-        // Editor input — wait 1 second after last keystroke before updating preview
-        let editTimer = null;
+        // Editor input — 1 second debounce after last keystroke
+        var editTimer = null;
         els.codeEditor.addEventListener('input', function () {
             if (editTimer) clearTimeout(editTimer);
             editTimer = setTimeout(function () {
-                editorContent[activeTab] = els.codeEditor.value;
+                saveCurrentTab();
                 scheduleRender();
             }, 1000);
         });
 
-        // Tab key support
+        // Tab key in editor
         els.codeEditor.addEventListener('keydown', function (e) {
             if (e.key === 'Tab') {
                 e.preventDefault();
-                const s = this.selectionStart;
-                const end = this.selectionEnd;
+                var s = this.selectionStart;
+                var end = this.selectionEnd;
                 this.value = this.value.substring(0, s) + '  ' + this.value.substring(end);
                 this.selectionStart = this.selectionEnd = s + 2;
             }
         });
 
-        // Preview toolbar
+        // Preview background toggle — does NOT reset CSS
         els.previewBgToggle.addEventListener('click', function () {
+            // Save any pending edits first
+            saveCurrentTab();
             previewDarkBg = !previewDarkBg;
             els.previewBgToggle.textContent = previewDarkBg ? '◑' : '◐';
             scheduleRender();
         });
 
+        // Reset button — resets component HTML/JS to defaults, keeps user CSS
         els.previewReset.addEventListener('click', function () {
             if (!currentComponent) return;
-            editorContent.html = currentComponent.html || '';
-            editorContent.css = currentComponent.css || '';
-            editorContent.js = currentComponent.js || '';
-            els.codeEditor.value = editorContent[activeTab] || '';
+            componentHTML = currentComponent.html || '';
+            componentJS = currentComponent.js || '';
+            // Don't reset userCSS — that's the user's work
+            if (activeTab === 'html') els.codeEditor.value = componentHTML;
+            if (activeTab === 'js') els.codeEditor.value = componentJS;
             scheduleRender();
         });
 
@@ -126,18 +135,55 @@ const App = (function () {
     }
 
     // =========================================================
+    // TAB MANAGEMENT
+    // =========================================================
+    function saveCurrentTab() {
+        var val = els.codeEditor.value;
+        if (activeTab === 'html') {
+            componentHTML = val;
+        } else if (activeTab === 'css') {
+            userCSS = val;
+        } else if (activeTab === 'js') {
+            componentJS = val;
+        }
+    }
+
+    function switchTab(lang) {
+        // Save what's currently in the editor
+        saveCurrentTab();
+
+        activeTab = lang;
+        updateTabUI();
+
+        // Load the new tab's content
+        if (lang === 'html') {
+            els.codeEditor.value = componentHTML;
+        } else if (lang === 'css') {
+            els.codeEditor.value = userCSS;
+        } else if (lang === 'js') {
+            els.codeEditor.value = componentJS;
+        }
+    }
+
+    function updateTabUI() {
+        els.editorTabs.querySelectorAll('.pane__tab').forEach(function (tab) {
+            tab.classList.toggle('pane__tab--active', tab.dataset.lang === activeTab);
+        });
+    }
+
+    // =========================================================
     // RENDER (Landing → Workspace)
     // =========================================================
     async function handleRender() {
-        const activePanel = $('.landing__panel--active');
+        var activePanel = $('.landing__panel--active');
 
         if (activePanel && activePanel.id === 'url-input') {
-            const url = els.urlInput.value.trim();
+            var url = els.urlInput.value.trim();
             if (!url) return;
             try {
                 els.renderBtn.textContent = 'Fetching...';
                 els.renderBtn.disabled = true;
-                const res = await fetch(url);
+                var res = await fetch(url);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 userCSS = await res.text();
             } catch (err) {
@@ -155,17 +201,18 @@ const App = (function () {
             parsedCSS = null;
         }
 
-        // Reset state
+        // Reset component state
         currentComponent = null;
-        editorContent = { html: '', css: '', js: '' };
+        componentHTML = '';
+        componentJS = '';
         activeTab = 'html';
 
         buildSidebar();
         els.landingView.classList.remove('view--active');
         els.workspaceView.classList.add('view--active');
 
-        // Auto-select first
-        const all = ComponentLibrary.getAll();
+        // Auto-select first component
+        var all = ComponentLibrary.getAll();
         if (all.length > 0) selectComponent(all[0].id);
 
         resetBtn();
@@ -177,8 +224,13 @@ const App = (function () {
     }
 
     function handleBack() {
+        // Save current CSS edits back to the textarea so they persist
+        saveCurrentTab();
+        els.cssInput.value = userCSS;
+
         currentComponent = null;
-        editorContent = { html: '', css: '', js: '' };
+        componentHTML = '';
+        componentJS = '';
         activeTab = 'html';
         els.codeEditor.value = '';
         els.previewFrame.srcdoc = '';
@@ -190,12 +242,12 @@ const App = (function () {
     // SIDEBAR
     // =========================================================
     function buildSidebar() {
-        const components = ComponentLibrary.getAll();
-        const categories = ComponentLibrary.categories;
-        let html = '';
+        var components = ComponentLibrary.getAll();
+        var categories = ComponentLibrary.categories;
+        var html = '';
 
         categories.forEach(function (cat) {
-            const items = components.filter(function (c) { return c.category === cat.id; });
+            var items = components.filter(function (c) { return c.category === cat.id; });
             if (items.length === 0) return;
             html += '<div class="sidebar__category">';
             html += '<div class="sidebar__category-title">' + cat.icon + ' ' + cat.name + '</div>';
@@ -209,7 +261,7 @@ const App = (function () {
 
         els.componentList.innerHTML = html;
         els.componentList.onclick = function (e) {
-            const item = e.target.closest('.sidebar__item');
+            var item = e.target.closest('.sidebar__item');
             if (item) selectComponent(item.dataset.id);
         };
     }
@@ -218,23 +270,26 @@ const App = (function () {
     // COMPONENT SELECTION
     // =========================================================
     function selectComponent(id) {
-        const comp = ComponentLibrary.getById(id);
+        var comp = ComponentLibrary.getById(id);
         if (!comp) return;
+
+        // Save any pending edits before switching
+        saveCurrentTab();
+
         currentComponent = comp;
 
-        // Highlight
+        // Highlight in sidebar
         els.componentList.querySelectorAll('.sidebar__item').forEach(function (el) {
             el.classList.toggle('sidebar__item--active', el.dataset.id === id);
         });
 
-        // Load content
-        editorContent.html = comp.html || '';
-        editorContent.css = comp.css || '';
-        editorContent.js = comp.js || '';
+        // Load component HTML and JS (user CSS stays as-is)
+        componentHTML = comp.html || '';
+        componentJS = comp.js || '';
 
         // JS tab visibility
-        const jsTab = els.editorTabs.querySelector('[data-lang="js"]');
-        if (editorContent.js) {
+        var jsTab = els.editorTabs.querySelector('[data-lang="js"]');
+        if (componentJS) {
             jsTab.classList.remove('pane__tab--hidden');
         } else {
             jsTab.classList.add('pane__tab--hidden');
@@ -242,33 +297,39 @@ const App = (function () {
         }
 
         updateTabUI();
-        els.codeEditor.value = editorContent[activeTab] || '';
+
+        // Load current tab content into editor
+        if (activeTab === 'html') {
+            els.codeEditor.value = componentHTML;
+        } else if (activeTab === 'css') {
+            els.codeEditor.value = userCSS;
+        } else if (activeTab === 'js') {
+            els.codeEditor.value = componentJS;
+        }
+
         scheduleRender();
     }
 
-    function updateTabUI() {
-        els.editorTabs.querySelectorAll('.pane__tab').forEach(function (tab) {
-            tab.classList.toggle('pane__tab--active', tab.dataset.lang === activeTab);
-        });
-    }
-
     // =========================================================
-    // PREVIEW — srcdoc approach (no document.write)
+    // PREVIEW — srcdoc (safe, no document.write)
     // =========================================================
     function scheduleRender() {
         if (renderPending) return;
         renderPending = true;
-        renderRAF = requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
             renderPending = false;
             renderPreview();
         });
     }
 
     function renderPreview() {
-        const bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
-        const fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
+        var bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
+        var fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
 
-        const html = [
+        // Get the component's built-in base CSS (always applied, not shown in editor)
+        var baseCSS = currentComponent ? (currentComponent.css || '') : '';
+
+        var html = [
             '<!DOCTYPE html>',
             '<html><head><meta charset="UTF-8">',
             '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
@@ -280,25 +341,23 @@ const App = (function () {
             '  font-size:14px; line-height:1.5; }',
             '.preview-wrapper { width:100%; max-width:800px; margin:0 auto; }',
             '</style>',
-            // Component default CSS (base styles)
-            '<style>' + sanitizeCSS(editorContent.css) + '</style>',
-            // User CSS on TOP — overrides component defaults
-            '<style>' + sanitizeCSS(userCSS) + '</style>',
+            // Component base CSS (built-in defaults — gives components shape)
+            '<style>' + sanitize(baseCSS) + '</style>',
+            // User CSS on top — this is what they edit and what overrides
+            '<style>' + sanitize(userCSS) + '</style>',
             '</head><body>',
             '<div class="preview-wrapper">',
-            editorContent.html,
+            componentHTML,
             '</div>',
-            editorContent.js ? '<script>' + editorContent.js + '<\/script>' : '',
+            componentJS ? '<script>' + componentJS + '<\/script>' : '',
             '</body></html>'
         ].join('\n');
 
-        // srcdoc is safer than document.write — no reflow loops
         els.previewFrame.srcdoc = html;
     }
 
-    function sanitizeCSS(css) {
+    function sanitize(css) {
         if (!css) return '';
-        // Escape closing style/script tags that could break out
         return css.replace(/<\/(style|script)/gi, '<\\/$1');
     }
 
@@ -306,8 +365,8 @@ const App = (function () {
     // RESIZE
     // =========================================================
     function initResize() {
-        let dragging = false;
-        let startX, startW;
+        var dragging = false;
+        var startX, startW;
 
         els.resizeHandle.addEventListener('mousedown', function (e) {
             dragging = true;
@@ -321,9 +380,9 @@ const App = (function () {
 
         document.addEventListener('mousemove', function (e) {
             if (!dragging) return;
-            const dx = e.clientX - startX;
-            const w = startW + dx;
-            const parent = els.editorPane.parentElement;
+            var dx = e.clientX - startX;
+            var w = startW + dx;
+            var parent = els.editorPane.parentElement;
             if (w > 200 && w < parent.offsetWidth - 200) {
                 els.editorPane.style.flex = 'none';
                 els.editorPane.style.width = w + 'px';
