@@ -313,6 +313,19 @@ input, textarea {
     color: var(--app-accent-hover);
 }
 
+.sidebar__category {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar__category-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--app-text-dim);
+    padding: 0.5rem 0.75rem 0.25rem;
+}
+
 .sidebar__item-icon {
     font-size: 1rem;
     width: 20px;
