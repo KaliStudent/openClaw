@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComponentKit — CSS Component Playground | Build, Preview & Export</title>
+    <meta name="description" content="Paste any CSS stylesheet and instantly preview it on 23+ real UI components. Live editing, code export, and project saving for professionals.">
+    <meta name="keywords" content="CSS playground, component library, CSS preview, UI components, design tool, CSS editor">
+    <meta name="author" content="ComponentKit">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="ComponentKit — CSS Component Playground">
+    <meta property="og:description" content="Paste your CSS and see it come alive on 23+ real components. Live editing, code export, and project saving.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://componentkit.dev">
+    <meta property="og:image" content="https://componentkit.dev/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ComponentKit — CSS Component Playground">
+    <meta name="twitter:description" content="Paste your CSS and see it come alive on 23+ real components.">
+
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo" aria-label="ComponentKit Home">
+                <span class="nav__logo-icon">⚡</span>
+                <span class="nav__logo-text">ComponentKit</span>
+            </a>
+            <ul class="nav__links" id="nav-links" role="navigation" aria-label="Main navigation">
+                <li><a href="#features" class="nav__link">Features</a></li>
+                <li><a href="#pricing" class="nav__link">Pricing</a></li>
+                <li><a href="#testimonials" class="nav__link">Reviews</a></li>
+                <li><a href="#faq" class="nav__link">FAQ</a></li>
+            </ul>
+            <div class="nav__actions">
+                <a href="app.html" class="nav__cta">Try Free</a>
+            </div>
+            <button class="nav__mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero__bg">
+                <div class="hero__glow hero__glow--1"></div>
+                <div class="hero__glow hero__glow--2"></div>
+            </div>
+            <div class="container hero__content">
+                <div class="hero__badge">
+                    <span class="hero__badge-dot"></span>
+                    Now with 23+ components
+                </div>
+                <h1 class="hero__title">
+                    <span class="hero__title-line">See Your CSS</span>
+                    <span class="hero__title-line hero__title-accent">Come Alive</span>
+                </h1>
+                <p class="hero__subtitle">
+                    Paste any stylesheet and instantly preview it on real UI components. 
+                    Edit live, export code, and ship faster.
+                </p>
+                <div class="hero__actions">
+                    <a href="app.html" class="btn btn--primary btn--lg">
+                        <span class="btn__icon">▶</span>
+                        Start Free
+                    </a>
+                    <a href="#features" class="btn btn--ghost btn--lg">
+                        See How It Works
+                    </a>
+                </div>
+                <div class="hero__stats">
+                    <div class="hero__stat">
+                        <span class="hero__stat-value">23+</span>
+                        <span class="hero__stat-label">Components</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-value">0ms</span>
+                        <span class="hero__stat-label">Setup</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-value">100%</span>
+                        <span class="hero__stat-label">Client-side</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-header__title">Everything you need to test CSS fast</h2>
+                    <p class="section-header__subtitle">No setup, no build tools, no frameworks. Just paste and preview.</p>
+                </div>
+                <div class="features__grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon">📋</div>
+                        <h3 class="feature-card__title">Paste & Preview</h3>
+                        <p class="feature-card__desc">Drop any CSS stylesheet and see it applied to real UI components instantly. No configuration needed.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">⚡</div>
+                        <h3 class="feature-card__title">Live Editing</h3>
+                        <p class="feature-card__desc">Edit HTML, CSS, and JavaScript in real-time with instant preview. Changes render as you type.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🧩</div>
+                        <h3 class="feature-card__title">23+ Components</h3>
+                        <p class="feature-card__desc">Buttons, forms, cards, modals, tables, navigation — all the components you actually use.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">📦</div>
+                        <h3 class="feature-card__title">Export & Save</h3>
+                        <p class="feature-card__desc">Export production-ready code or save your projects to pick up where you left off.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-header__title">Simple, transparent pricing</h2>
+                    <p class="section-header__subtitle">Start free, upgrade when you need more.</p>
+                </div>
+                <div class="pricing__toggle">
+                    <span class="pricing__toggle-label" id="toggle-monthly">Monthly</span>
+                    <button class="pricing__toggle-switch" id="pricing-toggle" role="switch" aria-checked="false" aria-label="Toggle annual pricing">
+                        <span class="pricing__toggle-knob"></span>
+                    </button>
+                    <span class="pricing__toggle-label" id="toggle-annual">
+                        Annual
+                        <span class="pricing__toggle-badge">Save 20%</span>
+                    </span>
+                </div>
+                <div class="pricing__grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Free</h3>
+                            <p class="pricing-card__desc">Perfect for quick experiments</p>
+                        </div>
+                        <div class="pricing-card__price">
+                            <span class="pricing-card__amount">$0</span>
+                            <span class="pricing-card__period">/forever</span>
+                        </div>
+                        <ul class="pricing-card__features" role="list">
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Paste CSS, preview live
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                5 core components
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Live HTML/CSS editing
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Dark/light preview toggle
+                            </li>
+                            <li class="pricing-card__feature pricing-card__feature--disabled">
+                                <span class="pricing-card__x" aria-hidden="true">✕</span>
+                                Export code
+                            </li>
+                            <li class="pricing-card__feature pricing-card__feature--disabled">
+                                <span class="pricing-card__x" aria-hidden="true">✕</span>
+                                Save projects
+                            </li>
+                        </ul>
+                        <a href="app.html" class="btn btn--outline btn--full">Get Started</a>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="pricing-card pricing-card--featured">
+                        <div class="pricing-card__popular">Most Popular</div>
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Pro</h3>
+                            <p class="pricing-card__desc">For serious CSS developers</p>
+                        </div>
+                        <div class="pricing-card__price">
+                            <span class="pricing-card__amount" data-monthly="$9" data-annual="$7">$9</span>
+                            <span class="pricing-card__period" data-monthly="/month" data-annual="/month">/month</span>
+                        </div>
+                        <ul class="pricing-card__features" role="list">
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Everything in Free
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                All 23+ components
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Export production code
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Save unlimited projects
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Priority template packs
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Early access to new components
+                            </li>
+                        </ul>
+                        <a href="app.html" class="btn btn--primary btn--full">Start Pro Trial</a>
+                    </div>
+
+                    <!-- Template Packs -->
+                    <div class="pricing-card">
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Template Packs</h3>
+                            <p class="pricing-card__desc">Premium pre-made bundles</p>
+                        </div>
+                        <div class="pricing-card__price">
+                            <span class="pricing-card__amount">$5–15</span>
+                            <span class="pricing-card__period">/pack</span>
+                        </div>
+                        <ul class="pricing-card__features" role="list">
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Curated CSS themes
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Dark & light variants
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Complete variable systems
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Production-ready CSS
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Lifetime updates
+                            </li>
+                            <li class="pricing-card__feature">
+                                <span class="pricing-card__check" aria-hidden="true">✓</span>
+                                Compatible with all components
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn--outline btn--full">Browse Packs</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-header__title">Loved by developers</h2>
+                    <p class="section-header__subtitle">See what people are saying about ComponentKit.</p>
+                </div>
+                <div class="testimonials__grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-card__quote">
+                            "ComponentKit saved me hours of setup time. I just paste my CSS and instantly see how it looks on real components. It's become essential to my workflow."
+                        </blockquote>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">SK</div>
+                            <div class="testimonial-card__info">
+                                <div class="testimonial-card__name">Sarah Kim</div>
+                                <div class="testimonial-card__role">Senior Frontend Engineer, Stripe</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-card__quote">
+                            "I use this every time I'm working on a design system. Being able to see all components update simultaneously when I tweak a variable is incredibly powerful."
+                        </blockquote>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">MR</div>
+                            <div class="testimonial-card__info">
+                                <div class="testimonial-card__name">Marcus Rivera</div>
+                                <div class="testimonial-card__role">Design Systems Lead, Figma</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-card__quote">
+                            "Finally, a tool that lets me prototype CSS without spinning up a whole project. The export feature means I can go from idea to production in minutes."
+                        </blockquote>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">JP</div>
+                            <div class="testimonial-card__info">
+                                <div class="testimonial-card__name">Julia Park</div>
+                                <div class="testimonial-card__role">UI Engineer, Vercel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-header__title">Frequently asked questions</h2>
+                    <p class="section-header__subtitle">Everything you need to know about ComponentKit.</p>
+                </div>
+                <div class="faq__list" role="list">
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-1">
+                            <span>How does ComponentKit work?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-1" role="region" hidden>
+                            <p>Simply paste your CSS stylesheet into the editor. ComponentKit instantly applies it to 23+ pre-built UI components so you can see exactly how your styles look on buttons, forms, cards, modals, and more. You can edit the HTML, CSS, and JavaScript in real-time with instant preview.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-2">
+                            <span>Do I need to install anything?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-2" role="region" hidden>
+                            <p>No! ComponentKit runs entirely in your browser. No npm install, no build tools, no server required. Just open the app and start pasting CSS. Everything is processed client-side for maximum speed and privacy.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-3">
+                            <span>What's the difference between Free and Pro?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-3" role="region" hidden>
+                            <p>The Free plan gives you access to 5 core components with full live editing. Pro unlocks all 23+ components, code export for production use, unlimited project saving, and access to premium template packs. Pro is $9/month or $7/month billed annually.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-4">
+                            <span>Can I use the exported code in commercial projects?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-4" role="region" hidden>
+                            <p>Absolutely! Any code you export from ComponentKit is yours to use however you like — personal projects, client work, commercial products. The component HTML structures are standard patterns, and combined with your CSS, they're fully production-ready.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-5">
+                            <span>What are Template Packs?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-5" role="region" hidden>
+                            <p>Template Packs are premium CSS themes designed by professionals. Each pack includes complete variable systems, dark and light variants, and production-ready stylesheets that work beautifully with all 23+ components. They range from $5–$15 and include lifetime updates.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" role="listitem">
+                        <button class="faq-item__question" aria-expanded="false" aria-controls="faq-6">
+                            <span>Is my CSS data private?</span>
+                            <span class="faq-item__icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-item__answer" id="faq-6" role="region" hidden>
+                            <p>Yes, completely. All CSS processing happens in your browser. We never send your stylesheets to any server. Saved projects (Pro feature) are stored locally in your browser's storage and optionally synced to your account with end-to-end encryption.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-section__content">
+                    <h2 class="cta-section__title">Ready to see your CSS come alive?</h2>
+                    <p class="cta-section__desc">Join thousands of developers who prototype faster with ComponentKit.</p>
+                    <a href="app.html" class="btn btn--primary btn--lg">
+                        <span class="btn__icon">⚡</span>
+                        Start Free — No Signup Required
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__brand">
+                    <a href="#" class="nav__logo">
+                        <span class="nav__logo-icon">⚡</span>
+                        <span class="nav__logo-text">ComponentKit</span>
+                    </a>
+                    <p class="footer__tagline">The fastest way to preview and test CSS on real components.</p>
+                </div>
+                <div class="footer__col">
+                    <h4 class="footer__col-title">Product</h4>
+                    <ul class="footer__links">
+                        <li><a href="app.html" class="footer__link">Launch App</a></li>
+                        <li><a href="#features" class="footer__link">Features</a></li>
+                        <li><a href="#pricing" class="footer__link">Pricing</a></li>
+                        <li><a href="#" class="footer__link">Template Packs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4 class="footer__col-title">Resources</h4>
+                    <ul class="footer__links">
+                        <li><a href="#" class="footer__link">Documentation</a></li>
+                        <li><a href="#faq" class="footer__link">FAQ</a></li>
+                        <li><a href="#" class="footer__link">Changelog</a></li>
+                        <li><a href="#" class="footer__link">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4 class="footer__col-title">Company</h4>
+                    <ul class="footer__links">
+                        <li><a href="#" class="footer__link">About</a></li>
+                        <li><a href="#" class="footer__link">Contact</a></li>
+                        <li><a href="#" class="footer__link">Privacy Policy</a></li>
+                        <li><a href="#" class="footer__link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copyright">&copy; 2026 ComponentKit. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky CTA (mobile) -->
+    <div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+        <a href="app.html" class="btn btn--primary btn--full">Start Free →</a>
+    </div>
+
+    <script src="js/landing.js"></script>
+</body>
+</html>
