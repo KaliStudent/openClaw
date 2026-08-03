@@ -1,22 +1,25 @@
 /* =============================================================
    CSS COMPONENT LAB — APPLICATION STYLES
+   Black + Lime Green | No Purple Ever
    ============================================================= */
 
 /* Tokens */
 :root {
-    --app-bg: #0a0a0f;
-    --app-surface-1: #12131a;
-    --app-surface-2: #1a1b24;
-    --app-surface-3: #22232e;
-    --app-border: rgba(255, 255, 255, 0.08);
-    --app-border-hover: rgba(255, 255, 255, 0.15);
-    --app-text: #e4e4e7;
-    --app-text-muted: #71717a;
-    --app-text-dim: #52525b;
+    --app-bg: #050505;
+    --app-surface-1: #0a0f0a;
+    --app-surface-2: #0f1a0f;
+    --app-surface-3: #142014;
+    --app-border: rgba(0, 255, 65, 0.1);
+    --app-border-hover: rgba(0, 255, 65, 0.25);
+    --app-text: #e8f5e9;
+    --app-text-muted: #6fbf73;
+    --app-text-dim: #2e7d32;
     --app-accent: #00ff41;
     --app-accent-hover: #39ff14;
-    --app-accent-soft: rgba(0, 255, 65, 0.12);
+    --app-accent-soft: rgba(0, 255, 65, 0.08);
+    --app-accent-glow: rgba(0, 255, 65, 0.3);
     --app-success: #00ff41;
+    --app-danger: #ff3131;
     --app-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --app-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
     --app-radius: 8px;
@@ -41,6 +44,10 @@ body {
     font-size: 14px;
     color: var(--app-text);
     background: var(--app-bg);
+    background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(0, 255, 65, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 65, 0.02) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 100%, rgba(0, 255, 65, 0.02) 0%, transparent 30%);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -98,10 +105,13 @@ input, textarea {
     font-weight: 700;
     letter-spacing: -0.03em;
     margin-bottom: 0.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 40px rgba(0, 255, 65, 0.15);
 }
 
 .landing__accent {
     color: var(--app-accent);
+    text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
 }
 
 .landing__subtitle {
@@ -120,6 +130,7 @@ input, textarea {
     display: flex;
     gap: 0.25rem;
     background: var(--app-surface-1);
+    border: 1px solid var(--app-border);
     border-radius: var(--app-radius);
     padding: 4px;
     width: fit-content;
@@ -135,12 +146,13 @@ input, textarea {
 }
 
 .landing__tab:hover {
-    color: var(--app-text);
+    color: var(--app-accent);
 }
 
 .landing__tab--active {
     background: var(--app-surface-3);
-    color: var(--app-text);
+    color: var(--app-accent);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
 }
 
 .landing__panel {
@@ -163,7 +175,7 @@ input, textarea {
     line-height: 1.6;
     color: var(--app-text);
     resize: vertical;
-    transition: border-color var(--app-transition);
+    transition: border-color var(--app-transition), box-shadow var(--app-transition);
 }
 
 .landing__textarea::placeholder {
@@ -172,6 +184,7 @@ input, textarea {
 
 .landing__textarea:focus {
     border-color: var(--app-accent);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.1), inset 0 0 30px rgba(0, 255, 65, 0.02);
 }
 
 .landing__url-input {
@@ -181,10 +194,12 @@ input, textarea {
     border-radius: var(--app-radius-lg);
     padding: 1rem 1.25rem;
     font-size: 0.9rem;
+    transition: border-color var(--app-transition), box-shadow var(--app-transition);
 }
 
 .landing__url-input:focus {
     border-color: var(--app-accent);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
 }
 
 .landing__render-btn {
@@ -194,17 +209,26 @@ input, textarea {
     gap: 0.5rem;
     width: 100%;
     padding: 1rem;
-    background: var(--app-accent);
-    color: #fff;
+    background: linear-gradient(135deg, #00cc33 0%, #00ff41 50%, #39ff14 100%);
+    color: #000;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: var(--app-radius);
     transition: all var(--app-transition);
+    box-shadow: 0 4px 20px rgba(0, 255, 65, 0.25), 0 0 40px rgba(0, 255, 65, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 .landing__render-btn:hover {
-    background: var(--app-accent-hover);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #39ff14 0%, #00ff41 50%, #00cc33 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(0, 255, 65, 0.35), 0 0 60px rgba(0, 255, 65, 0.15);
+}
+
+.landing__render-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 255, 65, 0.3);
 }
 
 .landing__render-icon {
@@ -264,7 +288,7 @@ input, textarea {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--app-text-muted);
+    color: var(--app-accent);
 }
 
 .sidebar__back-btn {
@@ -280,8 +304,8 @@ input, textarea {
 }
 
 .sidebar__back-btn:hover {
-    background: var(--app-surface-3);
-    color: var(--app-text);
+    background: var(--app-accent-soft);
+    color: var(--app-accent);
 }
 
 .sidebar__list {
@@ -310,7 +334,9 @@ input, textarea {
 
 .sidebar__item--active {
     background: var(--app-accent-soft);
-    color: var(--app-accent-hover);
+    color: var(--app-accent);
+    border-left: 2px solid var(--app-accent);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.05);
 }
 
 .sidebar__category {
@@ -338,6 +364,7 @@ input, textarea {
     flex: 1;
     display: flex;
     overflow: hidden;
+    background: var(--app-bg);
 }
 
 /* Panes */
@@ -382,8 +409,9 @@ input, textarea {
 }
 
 .pane__tab--active {
-    color: var(--app-accent-hover);
+    color: var(--app-accent);
     border-bottom-color: var(--app-accent);
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.3);
 }
 
 .pane__tab--hidden {
@@ -451,29 +479,30 @@ input, textarea {
 }
 
 .pane__toolbar-btn:hover {
-    background: var(--app-surface-3);
-    color: var(--app-text);
+    background: var(--app-accent-soft);
+    color: var(--app-accent);
 }
 
 .pane__iframe {
     flex: 1;
     width: 100%;
     border: none;
-    background: #ffffff;
+    background: #0a0a0a;
 }
 
 /* Resize Handle */
 .resize-handle {
-    width: 5px;
+    width: 4px;
     cursor: col-resize;
     background: var(--app-border);
-    transition: background var(--app-transition);
+    transition: background var(--app-transition), box-shadow var(--app-transition);
     flex-shrink: 0;
 }
 
 .resize-handle:hover,
 .resize-handle--active {
     background: var(--app-accent);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
 }
 
 /* =============================================================
@@ -485,7 +514,7 @@ input, textarea {
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--app-surface-1);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -494,5 +523,14 @@ input, textarea {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--app-text-dim);
+    background: var(--app-accent);
+    box-shadow: 0 0 4px rgba(0, 255, 65, 0.3);
+}
+
+/* =============================================================
+   SELECTION
+   ============================================================= */
+::selection {
+    background: rgba(0, 255, 65, 0.2);
+    color: #fff;
 }
