@@ -35,6 +35,7 @@ const App = (function () {
         els.workspaceView = $('#workspace-view');
         els.cssInput = $('#css-paste');
         els.urlInput = $('#css-url');
+        els.urlLoading = $('#url-loading');
         els.renderBtn = $('#render-btn');
         els.backBtn = $('#back-btn');
         els.componentList = $('#component-list');
@@ -46,6 +47,9 @@ const App = (function () {
         els.resizeHandle = $('#resize-handle');
         els.editorPane = $('#editor-pane');
         els.previewPane = $('#preview-pane');
+        els.supportModal = $('#support-modal');
+        els.proModal = $('#pro-modal');
+        els.toast = $('#toast');
     }
 
     // =========================================================
@@ -80,7 +84,6 @@ const App = (function () {
                 $$('.landing__panel').forEach(function (p) { p.classList.remove('landing__panel--active'); });
                 var panel = document.getElementById(target);
                 if (panel) {
-                    // Small delay so the closing animation starts before opening
                     setTimeout(function() { panel.classList.add('landing__panel--active'); }, 50);
                 }
             });
@@ -121,25 +124,38 @@ const App = (function () {
             }
         });
 
-        // Preview background toggle — does NOT reset CSS
+        // Preview background toggle
         els.previewBgToggle.addEventListener('click', function () {
-            // Save any pending edits first
             saveCurrentTab();
             previewDarkBg = !previewDarkBg;
             els.previewBgToggle.textContent = previewDarkBg ? '◑' : '◐';
             scheduleRender();
         });
 
-        // Reset button — resets component HTML/JS to defaults, keeps user CSS
+        // Reset button
         els.previewReset.addEventListener('click', function () {
             if (!currentComponent) return;
             componentHTML = currentComponent.html || '';
             componentJS = currentComponent.js || '';
-            // Don't reset userCSS — that's the user's work
             if (activeTab === 'html') els.codeEditor.value = componentHTML;
             if (activeTab === 'js') els.codeEditor.value = componentJS;
             scheduleRender();
         });
+
+        // Export buttons
+        $('#copy-html-btn').addEventListener('click', handleCopyHTML);
+        $('#copy-css-btn').addEventListener('click', handleCopyCSS);
+        $('#open-codepen-btn').addEventListener('click', handleOpenCodePen);
+
+        // Support modal triggers
+        $('#footer-support-link').addEventListener('click', function(e) { e.preventDefault(); openSupportModal(); });
+        $('#sidebar-support-btn').addEventListener('click', openSupportModal);
+        $('#support-modal-close').addEventListener('click', closeSupportModal);
+        els.supportModal.addEventListener('click', function(e) { if (e.target === this) closeSupportModal(); });
+
+        // Pro modal
+        $('#pro-modal-close').addEventListener('click', closeProModal);
+        els.proModal.addEventListener('click', function(e) { if (e.target === this) closeProModal(); });
 
         // Resize
         initResize();
@@ -151,7 +167,98 @@ const App = (function () {
                     handleRender();
                 }
             }
+            // Escape closes modals
+            if (e.key === 'Escape') {
+                closeSupportModal();
+                closeProModal();
+            }
         });
+    }
+
+    // =========================================================
+    // TOAST
+    // =========================================================
+    function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add('toast--visible');
+        setTimeout(function() {
+            els.toast.classList.remove('toast--visible');
+        }, 2000);
+    }
+
+    // =========================================================
+    // MODALS
+    // =========================================================
+    function openSupportModal() { els.supportModal.classList.add('active'); }
+    function closeSupportModal() { els.supportModal.classList.remove('active'); }
+    function openProModal() { els.proModal.classList.add('active'); }
+    function closeProModal() { els.proModal.classList.remove('active'); }
+
+    // =========================================================
+    // EXPORT FUNCTIONALITY
+    // =========================================================
+    function handleCopyHTML() {
+        if (!componentHTML) return;
+        copyToClipboard(componentHTML);
+        showToast('✓ HTML copied to clipboard');
+    }
+
+    function handleCopyCSS() {
+        var css = userCSS || '';
+        if (currentComponent && currentComponent.css) {
+            css = currentComponent.css + '\n\n/* === User CSS === */\n' + userCSS;
+        }
+        copyToClipboard(css);
+        showToast('✓ CSS copied to clipboard');
+    }
+
+    function handleOpenCodePen() {
+        if (!componentHTML) return;
+        var baseCSS = currentComponent ? (currentComponent.css || '') : '';
+        var fullCSS = baseCSS + '\n\n' + userCSS;
+        
+        var data = {
+            title: 'CSS Component Lab — ' + (currentComponent ? currentComponent.name : 'Export'),
+            html: componentHTML,
+            css: fullCSS,
+            js: componentJS || '',
+            editors: '110'
+        };
+
+        var json = JSON.stringify(data).replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        
+        // Create a form and POST to CodePen
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://codepen.io/pen/define';
+        form.target = '_blank';
+        
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'data';
+        input.value = JSON.stringify(data);
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        showToast('✓ Opened in CodePen');
+    }
+
+    function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
     }
 
     // =========================================================
@@ -169,13 +276,10 @@ const App = (function () {
     }
 
     function switchTab(lang) {
-        // Save what's currently in the editor
         saveCurrentTab();
-
         activeTab = lang;
         updateTabUI();
 
-        // Load the new tab's content
         if (lang === 'html') {
             els.codeEditor.value = componentHTML;
         } else if (lang === 'css') {
@@ -203,14 +307,17 @@ const App = (function () {
             try {
                 els.renderBtn.textContent = 'Fetching...';
                 els.renderBtn.disabled = true;
+                els.urlLoading.style.display = 'flex';
                 var res = await fetch(url);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 userCSS = await res.text();
             } catch (err) {
                 alert('Failed to fetch CSS: ' + err.message);
                 resetBtn();
+                els.urlLoading.style.display = 'none';
                 return;
             }
+            els.urlLoading.style.display = 'none';
         } else {
             userCSS = els.cssInput.value.trim();
         }
@@ -225,7 +332,7 @@ const App = (function () {
         currentComponent = null;
         componentHTML = '';
         componentJS = '';
-        activeTab = 'css';  // Start on CSS tab so user can edit styles immediately
+        activeTab = 'css';
 
         buildSidebar();
         els.landingView.classList.remove('view--active');
@@ -244,7 +351,6 @@ const App = (function () {
     }
 
     function handleBack() {
-        // Save current CSS edits back to the textarea so they persist
         saveCurrentTab();
         els.cssInput.value = userCSS;
 
@@ -261,6 +367,9 @@ const App = (function () {
     // =========================================================
     // SIDEBAR
     // =========================================================
+    // Pro items (visual indicator only — these IDs get a Pro badge)
+    var proItems = ['accordion', 'pricing-table', 'timeline', 'data-chart'];
+
     function buildSidebar() {
         var components = ComponentLibrary.getAll();
         var categories = ComponentLibrary.categories;
@@ -272,9 +381,15 @@ const App = (function () {
             html += '<div class="sidebar__category">';
             html += '<div class="sidebar__category-title">' + cat.icon + ' ' + cat.name + '</div>';
             items.forEach(function (comp) {
-                html += '<div class="sidebar__item" data-id="' + comp.id + '">';
+                var isPro = proItems.indexOf(comp.id) !== -1;
+                var proClass = isPro ? ' sidebar__item--pro' : '';
+                html += '<div class="sidebar__item' + proClass + '" data-id="' + comp.id + '"' + (isPro ? ' data-pro="true"' : '') + '>';
                 html += '<span class="sidebar__item-icon">' + comp.icon + '</span>';
-                html += '<span>' + comp.name + '</span></div>';
+                html += '<span>' + comp.name + '</span>';
+                if (isPro) {
+                    html += '<span class="sidebar__pro-badge"><span class="sidebar__pro-lock">🔒</span> PRO</span>';
+                }
+                html += '</div>';
             });
             html += '</div>';
         });
@@ -282,7 +397,12 @@ const App = (function () {
         els.componentList.innerHTML = html;
         els.componentList.onclick = function (e) {
             var item = e.target.closest('.sidebar__item');
-            if (item) selectComponent(item.dataset.id);
+            if (!item) return;
+            if (item.dataset.pro === 'true') {
+                openProModal();
+                return;
+            }
+            selectComponent(item.dataset.id);
         };
     }
 
@@ -293,9 +413,7 @@ const App = (function () {
         var comp = ComponentLibrary.getById(id);
         if (!comp) return;
 
-        // Save any pending edits before switching
         saveCurrentTab();
-
         currentComponent = comp;
 
         // Highlight in sidebar
@@ -303,12 +421,9 @@ const App = (function () {
             el.classList.toggle('sidebar__item--active', el.dataset.id === id);
         });
 
-        // Load component HTML and JS
         componentHTML = comp.html || '';
         componentJS = comp.js || '';
 
-        // If user hasn't pasted any CSS yet, pre-fill with the component's
-        // base CSS so they have a starting point to edit
         if (!userCSS.trim()) {
             userCSS = comp.css || '';
         }
@@ -324,7 +439,6 @@ const App = (function () {
 
         updateTabUI();
 
-        // Load current tab content into editor
         if (activeTab === 'html') {
             els.codeEditor.value = componentHTML;
         } else if (activeTab === 'css') {
@@ -337,7 +451,7 @@ const App = (function () {
     }
 
     // =========================================================
-    // PREVIEW — srcdoc (safe, no document.write)
+    // PREVIEW
     // =========================================================
     function scheduleRender() {
         if (renderPending) return;
@@ -352,8 +466,6 @@ const App = (function () {
         var bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
         var fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
 
-        // Component base CSS — always applied as structural foundation
-        // User CSS layers on top and can override everything
         var baseCSS = currentComponent ? (currentComponent.css || '') : '';
 
         var html = [
@@ -368,9 +480,7 @@ const App = (function () {
             '  font-size:14px; line-height:1.5; }',
             '.preview-wrapper { width:100%; max-width:800px; margin:0 auto; }',
             '</style>',
-            // Base component CSS (structural defaults)',
             '<style>' + sanitize(baseCSS) + '</style>',
-            // User CSS on top — overrides everything above',
             '<style>' + sanitize(userCSS) + '</style>',
             '</head><body>',
             '<div class="preview-wrapper">',

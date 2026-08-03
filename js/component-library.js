@@ -10,7 +10,8 @@ const ComponentLibrary = (function () {
     { id: 'navigation', name: 'Navigation', icon: '🧭' },
     { id: 'feedback', name: 'Feedback', icon: '💬' },
     { id: 'layout', name: 'Layout', icon: '📐' },
-    { id: 'content', name: 'Content', icon: '📄' }
+    { id: 'content', name: 'Content', icon: '📄' },
+    { id: 'pro', name: 'Pro', icon: '⭐' }
   ];
 
   const components = [
@@ -1338,6 +1339,45 @@ document.querySelector('.modal-overlay').addEventListener('click', function(e) {
 .badge-success { background: #34a853; }
 .badge-warning { background: #fb8c00; }
 .badge-danger { background: #e53935; }`,
+      js: ''
+    }
+  ];
+
+    // === PRO COMPONENTS (visual only, trigger Pro modal) ===
+    {
+      id: 'accordion',
+      name: 'Accordion / Collapse',
+      icon: '📂',
+      category: 'pro',
+      html: '',
+      css: '',
+      js: ''
+    },
+    {
+      id: 'pricing-table',
+      name: 'Pricing Table',
+      icon: '💰',
+      category: 'pro',
+      html: '',
+      css: '',
+      js: ''
+    },
+    {
+      id: 'timeline',
+      name: 'Timeline',
+      icon: '📅',
+      category: 'pro',
+      html: '',
+      css: '',
+      js: ''
+    },
+    {
+      id: 'data-chart',
+      name: 'Data Chart',
+      icon: '📈',
+      category: 'pro',
+      html: '',
+      css: '',
       js: ''
     }
   ];

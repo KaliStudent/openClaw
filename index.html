@@ -59,6 +59,10 @@
                 <div id="url-input" class="landing__panel">
                     <div>
                     <input type="url" id="css-url" class="landing__url-input" placeholder="https://example.com/styles.css">
+                    <div class="landing__url-loading" id="url-loading" style="display:none;">
+                        <span class="landing__url-spinner"></span>
+                        <span>Fetching stylesheet...</span>
+                    </div>
                     </div>
                 </div>
 
@@ -66,6 +70,28 @@
                     <span class="landing__render-icon">▶</span>
                     Build Components
                 </button>
+            </div>
+
+            <!-- How It Works -->
+            <div class="landing__how-it-works">
+                <h2 class="landing__section-title">How It Works</h2>
+                <div class="landing__steps">
+                    <div class="landing__step">
+                        <div class="landing__step-number">1</div>
+                        <h3 class="landing__step-title">Paste Your CSS</h3>
+                        <p class="landing__step-desc">Drop in any stylesheet — from a design system, framework, or your own project.</p>
+                    </div>
+                    <div class="landing__step">
+                        <div class="landing__step-number">2</div>
+                        <h3 class="landing__step-title">See It Live</h3>
+                        <p class="landing__step-desc">Instantly preview your styles on 20+ real UI components — buttons, forms, cards, and more.</p>
+                    </div>
+                    <div class="landing__step">
+                        <div class="landing__step-number">3</div>
+                        <h3 class="landing__step-title">Edit & Export</h3>
+                        <p class="landing__step-desc">Tweak styles in real-time. Copy the HTML/CSS or open directly in CodePen.</p>
+                    </div>
+                </div>
             </div>
 
             <div class="landing__features">
@@ -82,6 +108,36 @@
                     <span>Live editing with instant preview</span>
                 </div>
             </div>
+
+            <!-- Social Proof -->
+            <div class="landing__social-proof">
+                <div class="landing__social-proof-stats">
+                    <div class="landing__stat">
+                        <span class="landing__stat-number">2,400+</span>
+                        <span class="landing__stat-label">Developers</span>
+                    </div>
+                    <div class="landing__stat-divider"></div>
+                    <div class="landing__stat">
+                        <span class="landing__stat-number">8,100+</span>
+                        <span class="landing__stat-label">Stylesheets Tested</span>
+                    </div>
+                    <div class="landing__stat-divider"></div>
+                    <div class="landing__stat">
+                        <span class="landing__stat-number">100%</span>
+                        <span class="landing__stat-label">Free & Open</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="landing__footer">
+                <div class="landing__footer-links">
+                    <a href="#" class="landing__footer-link" id="footer-support-link">♥ Support</a>
+                    <a href="#GITHUB_LINK" class="landing__footer-link" target="_blank">GitHub</a>
+                    <a href="#TWITTER_LINK" class="landing__footer-link" target="_blank">Twitter</a>
+                </div>
+                <p class="landing__footer-copy">CSS Component Lab — Built with ♥ for the dev community</p>
+            </footer>
         </div>
     </div>
 
@@ -100,6 +156,9 @@
                 </div>
                 <div class="sidebar__list" id="component-list">
                     <!-- Populated by JS -->
+                </div>
+                <div class="sidebar__footer">
+                    <button class="sidebar__support-btn" id="sidebar-support-btn">♥ Support This Tool</button>
                 </div>
             </aside>
 
@@ -126,6 +185,16 @@
                     <div class="pane__toolbar">
                         <span class="pane__toolbar-label">Preview</span>
                         <div class="pane__toolbar-actions">
+                            <button class="pane__toolbar-btn" id="copy-html-btn" title="Copy HTML">
+                                <span class="toolbar-btn-text">⟨/⟩ HTML</span>
+                            </button>
+                            <button class="pane__toolbar-btn" id="copy-css-btn" title="Copy CSS">
+                                <span class="toolbar-btn-text">{ } CSS</span>
+                            </button>
+                            <button class="pane__toolbar-btn" id="open-codepen-btn" title="Open in CodePen">
+                                <span class="toolbar-btn-text">↗ CodePen</span>
+                            </button>
+                            <span class="toolbar-divider"></span>
                             <button class="pane__toolbar-btn" id="preview-bg-toggle" title="Toggle background">◐</button>
                             <button class="pane__toolbar-btn" id="preview-reset" title="Reset changes">↺</button>
                         </div>
@@ -136,6 +205,61 @@
             </div>
         </div>
     </div>
+
+    <!-- SUPPORT MODAL -->
+    <div class="support-modal-overlay" id="support-modal">
+        <div class="support-modal">
+            <button class="support-modal__close" id="support-modal-close">&times;</button>
+            <div class="support-modal__icon">♥</div>
+            <h2 class="support-modal__title">Support CSS Component Lab</h2>
+            <p class="support-modal__desc">This tool is free. If it saved you time, consider supporting it.</p>
+            
+            <div class="support-modal__amounts">
+                <a href="#PAYMENT_LINK" class="support-modal__amount" target="_blank">$3</a>
+                <a href="#PAYMENT_LINK" class="support-modal__amount" target="_blank">$5</a>
+                <a href="#PAYMENT_LINK" class="support-modal__amount support-modal__amount--popular" target="_blank">$10</a>
+                <a href="#PAYMENT_LINK" class="support-modal__amount" target="_blank">$20</a>
+            </div>
+
+            <a href="#PAYMENT_LINK" class="support-modal__main-btn" target="_blank">☕ Buy Me a Coffee</a>
+
+            <div class="support-modal__breakdown">
+                <h4 class="support-modal__breakdown-title">What your support goes toward:</h4>
+                <ul class="support-modal__breakdown-list">
+                    <li>🖥️ Server & hosting costs (~$15/mo)</li>
+                    <li>⏱️ Development time (new components, features)</li>
+                    <li>🔓 Keeping the tool free for everyone</li>
+                    <li>🚀 Pro tier development (coming soon)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRO MODAL -->
+    <div class="pro-modal-overlay" id="pro-modal">
+        <div class="pro-modal">
+            <button class="pro-modal__close" id="pro-modal-close">&times;</button>
+            <div class="pro-modal__badge">PRO</div>
+            <h2 class="pro-modal__title">Unlock Pro Components</h2>
+            <p class="pro-modal__desc">Pro unlocks 10+ extra components, export to CodePen, save projects. Coming soon — support now to get early access.</p>
+            
+            <ul class="pro-modal__features">
+                <li>✓ Accordion / Collapse</li>
+                <li>✓ Pricing Table</li>
+                <li>✓ Timeline</li>
+                <li>✓ Data Charts</li>
+                <li>✓ Export to CodePen (one-click)</li>
+                <li>✓ Save & share projects</li>
+                <li>✓ Custom component templates</li>
+            </ul>
+
+            <a href="#PAYMENT_LINK" class="pro-modal__cta" target="_blank">Support Now → Get Early Access</a>
+            <p class="pro-modal__note">Supporters get Pro free when it launches</p>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
 
     <script src="js/css-parser.js"></script>
     <script src="js/component-library.js"></script>
