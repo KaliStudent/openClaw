@@ -13,10 +13,10 @@
     --app-text: #e4e4e7;
     --app-text-muted: #71717a;
     --app-text-dim: #52525b;
-    --app-accent: #6366f1;
-    --app-accent-hover: #818cf8;
-    --app-accent-soft: rgba(99, 102, 241, 0.12);
-    --app-success: #22c55e;
+    --app-accent: #00ff41;
+    --app-accent-hover: #39ff14;
+    --app-accent-soft: rgba(0, 255, 65, 0.12);
+    --app-success: #00ff41;
     --app-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --app-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
     --app-radius: 8px;
