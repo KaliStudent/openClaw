@@ -19,11 +19,13 @@
 
             <div class="landing__input-area">
                 <div class="landing__tabs">
+                    <div class="landing__tabs-slider" id="tabs-slider"></div>
                     <button class="landing__tab landing__tab--active" data-target="css-input">Paste CSS</button>
                     <button class="landing__tab" data-target="url-input">From URL</button>
                 </div>
 
                 <div id="css-input" class="landing__panel landing__panel--active">
+                    <div>
                     <textarea id="css-paste" class="landing__textarea" placeholder="/* Paste your full CSS stylesheet here... */
 
 :root {
@@ -51,10 +53,13 @@
 
 /* ...paste your entire stylesheet */
 " spellcheck="false"></textarea>
+                    </div>
                 </div>
 
                 <div id="url-input" class="landing__panel">
+                    <div>
                     <input type="url" id="css-url" class="landing__url-input" placeholder="https://example.com/styles.css">
+                    </div>
                 </div>
 
                 <button id="render-btn" class="landing__render-btn">

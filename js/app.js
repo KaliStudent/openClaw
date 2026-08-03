@@ -55,14 +55,34 @@ const App = (function () {
         cacheElements();
 
         // Landing tabs
-        $$('.landing__tab').forEach(function (tab) {
+        var tabsSlider = document.getElementById('tabs-slider');
+        var landingTabs = $$('.landing__tab');
+        
+        function updateSlider(activeTab) {
+            if (!tabsSlider || !activeTab) return;
+            var tabsContainer = activeTab.parentElement;
+            var containerRect = tabsContainer.getBoundingClientRect();
+            var tabRect = activeTab.getBoundingClientRect();
+            var offsetX = tabRect.left - containerRect.left;
+            tabsSlider.style.width = tabRect.width + 'px';
+            tabsSlider.style.transform = 'translateX(' + (offsetX - 4) + 'px)';
+        }
+        
+        // Initialize slider position
+        setTimeout(function() { updateSlider(document.querySelector('.landing__tab--active')); }, 0);
+        
+        landingTabs.forEach(function (tab) {
             tab.addEventListener('click', function () {
                 var target = tab.dataset.target;
-                $$('.landing__tab').forEach(function (t) { t.classList.remove('landing__tab--active'); });
+                landingTabs.forEach(function (t) { t.classList.remove('landing__tab--active'); });
                 tab.classList.add('landing__tab--active');
+                updateSlider(tab);
                 $$('.landing__panel').forEach(function (p) { p.classList.remove('landing__panel--active'); });
                 var panel = document.getElementById(target);
-                if (panel) panel.classList.add('landing__panel--active');
+                if (panel) {
+                    // Small delay so the closing animation starts before opening
+                    setTimeout(function() { panel.classList.add('landing__panel--active'); }, 50);
+                }
             });
         });
 
