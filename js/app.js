@@ -225,7 +225,7 @@ const App = (function () {
         currentComponent = null;
         componentHTML = '';
         componentJS = '';
-        activeTab = 'html';
+        activeTab = 'css';  // Start on CSS tab so user can edit styles immediately
 
         buildSidebar();
         els.landingView.classList.remove('view--active');
@@ -303,9 +303,15 @@ const App = (function () {
             el.classList.toggle('sidebar__item--active', el.dataset.id === id);
         });
 
-        // Load component HTML and JS (user CSS stays as-is)
+        // Load component HTML and JS
         componentHTML = comp.html || '';
         componentJS = comp.js || '';
+
+        // If user hasn't pasted any CSS yet, pre-fill with the component's
+        // base CSS so they have a starting point to edit
+        if (!userCSS.trim()) {
+            userCSS = comp.css || '';
+        }
 
         // JS tab visibility
         var jsTab = els.editorTabs.querySelector('[data-lang="js"]');
@@ -346,9 +352,9 @@ const App = (function () {
         var bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
         var fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
 
-        // Only use component base CSS as fallback when user hasn't provided any CSS
+        // Component base CSS — always applied as structural foundation
+        // User CSS layers on top and can override everything
         var baseCSS = currentComponent ? (currentComponent.css || '') : '';
-        var hasUserCSS = userCSS.trim().length > 0;
 
         var html = [
             '<!DOCTYPE html>',
@@ -362,9 +368,9 @@ const App = (function () {
             '  font-size:14px; line-height:1.5; }',
             '.preview-wrapper { width:100%; max-width:800px; margin:0 auto; }',
             '</style>',
-            // If user provided CSS, use ONLY their CSS (the whole point of the tool)
-            // If no user CSS yet, show component defaults as a reference
-            hasUserCSS ? '' : '<style>' + sanitize(baseCSS) + '</style>',
+            // Base component CSS (structural defaults)',
+            '<style>' + sanitize(baseCSS) + '</style>',
+            // User CSS on top — overrides everything above',
             '<style>' + sanitize(userCSS) + '</style>',
             '</head><body>',
             '<div class="preview-wrapper">',
