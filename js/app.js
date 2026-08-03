@@ -346,8 +346,9 @@ const App = (function () {
         var bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
         var fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
 
-        // Get the component's built-in base CSS (always applied, not shown in editor)
+        // Only use component base CSS as fallback when user hasn't provided any CSS
         var baseCSS = currentComponent ? (currentComponent.css || '') : '';
+        var hasUserCSS = userCSS.trim().length > 0;
 
         var html = [
             '<!DOCTYPE html>',
@@ -361,9 +362,9 @@ const App = (function () {
             '  font-size:14px; line-height:1.5; }',
             '.preview-wrapper { width:100%; max-width:800px; margin:0 auto; }',
             '</style>',
-            // Component base CSS (built-in defaults — gives components shape)
-            '<style>' + sanitize(baseCSS) + '</style>',
-            // User CSS on top — this is what they edit and what overrides
+            // If user provided CSS, use ONLY their CSS (the whole point of the tool)
+            // If no user CSS yet, show component defaults as a reference
+            hasUserCSS ? '' : '<style>' + sanitize(baseCSS) + '</style>',
             '<style>' + sanitize(userCSS) + '</style>',
             '</head><body>',
             '<div class="preview-wrapper">',
