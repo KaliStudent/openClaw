@@ -1,34 +1,33 @@
 /**
- * ComponentKit — Main Application Controller (Enhanced)
+ * CSS Component Lab — Main Application Controller
  * 
- * Adds:
- * - Pro gate: Components 6+ locked for free users with blur overlay
- * - Toast notifications for pro features
- * - Pro upgrade modal
- * - Export Code / Save Project buttons (pro-gated)
- * - Toolbar integration
+ * Flow:
+ * 1. User pastes CSS on landing page
+ * 2. Workspace loads with components in sidebar
+ * 3. Selecting a component shows:
+ *    - HTML tab: the component's HTML (editable)
+ *    - CSS tab: the USER's CSS (editable — this is what they're here to tweak)
+ *    - JS tab: component JS if needed (editable)
+ * 4. Preview shows: component HTML + component base CSS + user CSS on top
+ * 5. Edits in CSS tab update the user CSS and re-render after 1s pause
  */
 
 const App = (function () {
     'use strict';
 
-    // Constants
-    const FREE_COMPONENT_LIMIT = 5; // First 5 components are free
-
     // State
-    let userCSS = '';
+    let userCSS = '';           // The CSS the user pasted (editable via CSS tab)
     let parsedCSS = null;
     let currentComponent = null;
-    let componentHTML = '';
-    let componentJS = '';
+    let componentHTML = '';     // Current component's HTML (editable via HTML tab)
+    let componentJS = '';      // Current component's JS (editable via JS tab)
     let activeTab = 'html';
     let previewDarkBg = false;
     let renderPending = false;
-    let isProUser = false; // Simulated — always false for demo
 
     // DOM cache
-    const $ = function (sel) { return document.querySelector(sel); };
-    const $$ = function (sel) { return Array.from(document.querySelectorAll(sel)); };
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
     const els = {};
 
     function cacheElements() {
@@ -47,14 +46,6 @@ const App = (function () {
         els.resizeHandle = $('#resize-handle');
         els.editorPane = $('#editor-pane');
         els.previewPane = $('#preview-pane');
-        els.toast = $('#toast');
-        els.toastMessage = $('#toast-message');
-        els.toastAction = $('#toast-action');
-        els.proModal = $('#pro-modal');
-        els.proModalClose = $('#pro-modal-close');
-        els.saveBtn = $('#save-project-btn');
-        els.exportBtn = $('#export-code-btn');
-        els.upgradeBtn = $('#upgrade-btn');
     }
 
     // =========================================================
@@ -89,7 +80,7 @@ const App = (function () {
             }
         });
 
-        // Editor input — 1 second debounce
+        // Editor input — 1 second debounce after last keystroke
         var editTimer = null;
         els.codeEditor.addEventListener('input', function () {
             if (editTimer) clearTimeout(editTimer);
@@ -110,19 +101,21 @@ const App = (function () {
             }
         });
 
-        // Preview background toggle
+        // Preview background toggle — does NOT reset CSS
         els.previewBgToggle.addEventListener('click', function () {
+            // Save any pending edits first
             saveCurrentTab();
             previewDarkBg = !previewDarkBg;
             els.previewBgToggle.textContent = previewDarkBg ? '◑' : '◐';
             scheduleRender();
         });
 
-        // Reset button
+        // Reset button — resets component HTML/JS to defaults, keeps user CSS
         els.previewReset.addEventListener('click', function () {
             if (!currentComponent) return;
             componentHTML = currentComponent.html || '';
             componentJS = currentComponent.js || '';
+            // Don't reset userCSS — that's the user's work
             if (activeTab === 'html') els.codeEditor.value = componentHTML;
             if (activeTab === 'js') els.codeEditor.value = componentJS;
             scheduleRender();
@@ -139,112 +132,6 @@ const App = (function () {
                 }
             }
         });
-
-        // Pro feature buttons
-        els.saveBtn.addEventListener('click', function () {
-            if (!isProUser) {
-                showToast('Save Project is a Pro feature — Upgrade to save your work');
-            }
-        });
-
-        els.exportBtn.addEventListener('click', function () {
-            if (!isProUser) {
-                showToast('Export Code is a Pro feature — Upgrade to export production code');
-            }
-        });
-
-        // Upgrade button
-        els.upgradeBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            showProModal();
-        });
-
-        // Pro modal close
-        els.proModalClose.addEventListener('click', hideProModal);
-        els.proModal.addEventListener('click', function (e) {
-            if (e.target === els.proModal) hideProModal();
-        });
-
-        // Toast action
-        els.toastAction.addEventListener('click', function (e) {
-            e.preventDefault();
-            hideToast();
-            showProModal();
-        });
-
-        // Escape key to close modal
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                hideProModal();
-            }
-        });
-    }
-
-    // =========================================================
-    // TOAST
-    // =========================================================
-    var toastTimer = null;
-
-    function showToast(message) {
-        if (toastTimer) clearTimeout(toastTimer);
-        els.toastMessage.textContent = message;
-        els.toast.classList.add('toast--visible');
-        toastTimer = setTimeout(function () {
-            hideToast();
-        }, 4000);
-    }
-
-    function hideToast() {
-        els.toast.classList.remove('toast--visible');
-        if (toastTimer) {
-            clearTimeout(toastTimer);
-            toastTimer = null;
-        }
-    }
-
-    // =========================================================
-    // PRO MODAL
-    // =========================================================
-    function showProModal() {
-        els.proModal.classList.add('pro-modal-overlay--active');
-    }
-
-    function hideProModal() {
-        els.proModal.classList.remove('pro-modal-overlay--active');
-    }
-
-    // =========================================================
-    // PRO GATING
-    // =========================================================
-    function isComponentLocked(index) {
-        return !isProUser && index >= FREE_COMPONENT_LIMIT;
-    }
-
-    function showProLockOverlay() {
-        // Remove any existing overlay
-        removeProLockOverlay();
-
-        var overlay = document.createElement('div');
-        overlay.className = 'pro-lock-overlay';
-        overlay.id = 'pro-lock-active';
-        overlay.innerHTML = [
-            '<div class="pro-lock-overlay__icon">🔒</div>',
-            '<div class="pro-lock-overlay__text">Pro Component</div>',
-            '<div class="pro-lock-overlay__desc">Upgrade to Pro to unlock all 23+ components, export code, and save projects.</div>',
-            '<button class="pro-lock-overlay__btn" id="pro-lock-upgrade">Upgrade to Pro</button>'
-        ].join('');
-
-        var mainArea = document.querySelector('.main-area');
-        mainArea.appendChild(overlay);
-
-        document.getElementById('pro-lock-upgrade').addEventListener('click', function () {
-            showProModal();
-        });
-    }
-
-    function removeProLockOverlay() {
-        var existing = document.getElementById('pro-lock-active');
-        if (existing) existing.remove();
     }
 
     // =========================================================
@@ -262,10 +149,13 @@ const App = (function () {
     }
 
     function switchTab(lang) {
+        // Save what's currently in the editor
         saveCurrentTab();
+
         activeTab = lang;
         updateTabUI();
 
+        // Load the new tab's content
         if (lang === 'html') {
             els.codeEditor.value = componentHTML;
         } else if (lang === 'css') {
@@ -311,6 +201,7 @@ const App = (function () {
             parsedCSS = null;
         }
 
+        // Reset component state
         currentComponent = null;
         componentHTML = '';
         componentJS = '';
@@ -333,6 +224,7 @@ const App = (function () {
     }
 
     function handleBack() {
+        // Save current CSS edits back to the textarea so they persist
         saveCurrentTab();
         els.cssInput.value = userCSS;
 
@@ -342,7 +234,6 @@ const App = (function () {
         activeTab = 'html';
         els.codeEditor.value = '';
         els.previewFrame.srcdoc = '';
-        removeProLockOverlay();
         els.workspaceView.classList.remove('view--active');
         els.landingView.classList.add('view--active');
     }
@@ -354,7 +245,6 @@ const App = (function () {
         var components = ComponentLibrary.getAll();
         var categories = ComponentLibrary.categories;
         var html = '';
-        var componentIndex = 0;
 
         categories.forEach(function (cat) {
             var items = components.filter(function (c) { return c.category === cat.id; });
@@ -362,16 +252,9 @@ const App = (function () {
             html += '<div class="sidebar__category">';
             html += '<div class="sidebar__category-title">' + cat.icon + ' ' + cat.name + '</div>';
             items.forEach(function (comp) {
-                var locked = isComponentLocked(componentIndex);
-                var lockedClass = locked ? ' sidebar__item--locked' : '';
-                html += '<div class="sidebar__item' + lockedClass + '" data-id="' + comp.id + '" data-index="' + componentIndex + '">';
+                html += '<div class="sidebar__item" data-id="' + comp.id + '">';
                 html += '<span class="sidebar__item-icon">' + comp.icon + '</span>';
-                html += '<span>' + comp.name + '</span>';
-                if (locked) {
-                    html += '<span class="sidebar__pro-badge">PRO</span>';
-                }
-                html += '</div>';
-                componentIndex++;
+                html += '<span>' + comp.name + '</span></div>';
             });
             html += '</div>';
         });
@@ -390,11 +273,9 @@ const App = (function () {
         var comp = ComponentLibrary.getById(id);
         if (!comp) return;
 
-        // Find index
-        var allComponents = ComponentLibrary.getAll();
-        var index = allComponents.findIndex(function (c) { return c.id === id; });
-
+        // Save any pending edits before switching
         saveCurrentTab();
+
         currentComponent = comp;
 
         // Highlight in sidebar
@@ -402,33 +283,7 @@ const App = (function () {
             el.classList.toggle('sidebar__item--active', el.dataset.id === id);
         });
 
-        // Check if locked
-        if (isComponentLocked(index)) {
-            showProLockOverlay();
-            componentHTML = comp.html || '';
-            componentJS = comp.js || '';
-
-            // Still show the code but with lock overlay
-            var jsTab = els.editorTabs.querySelector('[data-lang="js"]');
-            if (componentJS) {
-                jsTab.classList.remove('pane__tab--hidden');
-            } else {
-                jsTab.classList.add('pane__tab--hidden');
-                if (activeTab === 'js') activeTab = 'html';
-            }
-            updateTabUI();
-
-            if (activeTab === 'html') els.codeEditor.value = componentHTML;
-            else if (activeTab === 'css') els.codeEditor.value = userCSS;
-            else if (activeTab === 'js') els.codeEditor.value = componentJS;
-
-            scheduleRender();
-            return;
-        }
-
-        // Not locked — remove any overlay
-        removeProLockOverlay();
-
+        // Load component HTML and JS (user CSS stays as-is)
         componentHTML = comp.html || '';
         componentJS = comp.js || '';
 
@@ -443,6 +298,7 @@ const App = (function () {
 
         updateTabUI();
 
+        // Load current tab content into editor
         if (activeTab === 'html') {
             els.codeEditor.value = componentHTML;
         } else if (activeTab === 'css') {
@@ -455,7 +311,7 @@ const App = (function () {
     }
 
     // =========================================================
-    // PREVIEW
+    // PREVIEW — srcdoc (safe, no document.write)
     // =========================================================
     function scheduleRender() {
         if (renderPending) return;
@@ -470,6 +326,7 @@ const App = (function () {
         var bg = previewDarkBg ? '#1a1a2e' : '#ffffff';
         var fg = previewDarkBg ? '#e4e4e7' : '#1a1a1a';
 
+        // Get the component's built-in base CSS (always applied, not shown in editor)
         var baseCSS = currentComponent ? (currentComponent.css || '') : '';
 
         var html = [
@@ -484,7 +341,9 @@ const App = (function () {
             '  font-size:14px; line-height:1.5; }',
             '.preview-wrapper { width:100%; max-width:800px; margin:0 auto; }',
             '</style>',
+            // Component base CSS (built-in defaults — gives components shape)
             '<style>' + sanitize(baseCSS) + '</style>',
+            // User CSS on top — this is what they edit and what overrides
             '<style>' + sanitize(userCSS) + '</style>',
             '</head><body>',
             '<div class="preview-wrapper">',
@@ -547,5 +406,5 @@ const App = (function () {
         init();
     }
 
-    return { init: init };
+    return { init };
 })();
