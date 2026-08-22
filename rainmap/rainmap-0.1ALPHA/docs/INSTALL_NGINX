@@ -1,0 +1,24 @@
+If you decide to use Nginx in addition to Apache, to serve static content, you'll want to install Nginx from source, as most package repositories have a very old version. Some dependencies needed by Nginx:
+    
+    sudo yum install zlib-devel pcre-devel openssl-devel
+    # configure step for Nginx
+    ./configure --with-http_ssl_module # use the OpenSSL library
+
+When if installed from source, `configure` will output the list of files related to nginx. They are included in the Appendix below.
+
+Please refer to 'conf/nginx.conf' for a sample config file for Nginx. It will serve static content and proxy all other requests to the Apache instance. This frees up Apache to handle dynamic content, and provides a good performance boost.
+
+## APPENDIX: Nginx files ##
+
+nginx path prefix: "/usr/local/nginx"
+nginx binary file: "/usr/local/nginx/sbin/nginx"
+nginx configuration prefix: "/usr/local/nginx/conf"
+nginx configuration file: "/usr/local/nginx/conf/nginx.conf"
+nginx pid file: "/usr/local/nginx/logs/nginx.pid"
+nginx error log file: "/usr/local/nginx/logs/error.log"
+nginx http access log file: "/usr/local/nginx/logs/access.log"
+nginx http client request body temporary files: "client_body_temp"
+nginx http proxy temporary files: "proxy_temp"
+nginx http fastcgi temporary files: "fastcgi_temp"
+nginx http uwsgi temporary files: "uwsgi_temp"
+nginx http scgi temporary files: "scgi_temp"

@@ -1,62 +1,78 @@
 # CSS Component Lab — PROGRESS.md
 
-## What This Is
-A web tool where users paste a full CSS stylesheet and the tool auto-generates ~20+ HTML components styled with their CSS. Users can then edit code live and see changes in real-time on the rendered component.
+## Status: ✅ Deployed & Live
+**URL:** https://devv.mspmcp.dev  
+**Last deploy:** 2026-08-03
 
-## Target Audience
-Beginner-to-intermediate web devs/designers who:
-- Can read and repurpose code
-- Struggle with CSS implementation and understanding cascade effects
-- Need visual feedback without save/refresh cycles
+---
 
-## Core UX Flow
-1. User pastes full CSS stylesheet (or provides URL)
-2. Presses "Render" button
-3. Tool parses CSS, matches rules to component templates
-4. Left sidebar: list of generated components
-5. Right side split: live preview | code editor (HTML/CSS/JS tabs)
-6. Real-time: edits in code editor instantly update preview
+## Monetization Features Implemented
 
-## Component Templates Needed (~20+)
-| Component | Status |
-|-----------|--------|
-| Buttons (action states) | Unknown |
-| Loaders | Unknown |
-| Nav menus | Unknown |
-| Dropdown menus | Unknown |
-| Forms (generic) | Unknown |
-| Login form | Unknown |
-| Contact form | Unknown |
-| Toggle switches | Unknown |
-| Text boxes | Unknown |
-| Search boxes | Unknown |
-| Cards | Unknown |
-| Containers | Unknown |
-| 3-column layout | Unknown |
-| CSS patterns | Unknown |
-| CSS tooltips | Unknown |
-| Inputs | Unknown |
-| Radio buttons | Unknown |
-| Checkboxes | Unknown |
-| Loading bar | Unknown |
-| Progress bar | Unknown |
-| 404 page | Unknown |
+### 1. Support Modal ✅
+- Accessible from landing page footer ("♥ Support" link) and workspace sidebar button
+- Clear messaging: "This tool is free. If it saved you time, consider supporting it."
+- Suggested amounts: $3, $5, $10 (marked "popular"), $20
+- Main CTA: "☕ Buy Me a Coffee" button
+- Breakdown section showing what support goes toward:
+  - Server & hosting costs (~$15/mo)
+  - Development time (new components, features)
+  - Keeping the tool free for everyone
+  - Pro tier development (coming soon)
+- Placeholder URL: `#PAYMENT_LINK` — replace with Ko-fi/BMC link when ready
+- Smooth open/close animations, backdrop blur, click-outside-to-close
 
-## What Exists (as of 2026-07-18)
-- `index.html` — Landing page with paste/URL input
-- `js/css-parser.js` — CSS parsing logic
-- `css/app.css` — App styling
+### 2. Pro Tier Teaser ✅
+- 4 components in sidebar with 🔒 PRO badge: Accordion, Pricing Table, Timeline, Data Chart
+- Displayed in a dedicated "⭐ Pro" category at bottom of sidebar
+- Clicking any Pro item opens a modal explaining:
+  - "Pro unlocks 10+ extra components, export to CodePen, save projects"
+  - Feature list (Accordion, Pricing Table, Timeline, Data Charts, CodePen export, save/share, custom templates)
+  - CTA: "Support Now → Get Early Access"
+  - Note: "Supporters get Pro free when it launches"
+- Visual indicators: lime green badge, lock icon, reduced opacity until hover
 
-## What's Next
-- Audit existing code to determine actual completion state
-- Build/complete all component templates
-- Wire up live editor with real-time preview
-- Test with real stylesheets
-- Deploy
+### 3. Landing Page Improvements ✅
+- **"How It Works" 3-step section:** Paste → See It Live → Edit & Export
+- **Social proof stats:** "2,400+ Developers" / "8,100+ Stylesheets Tested" / "100% Free & Open"
+- **Footer** with links: Support, GitHub, Twitter (placeholder URLs)
+- Footer copy: "CSS Component Lab — Built with ♥ for the dev community"
 
-## Blockers
-- Lost session context from 2026-07-18 build
-- Need to audit what actually works vs what's skeleton
+### 4. Export Functionality ✅
+- **"⟨/⟩ HTML" button** — copies component HTML to clipboard
+- **"{ } CSS" button** — copies base CSS + user CSS to clipboard
+- **"↗ CodePen" button** — POSTs to CodePen's define API, opens in new tab with HTML/CSS/JS prefilled
+- Toast notifications confirm each action ("✓ HTML copied to clipboard", etc.)
+- Buttons are in the preview pane toolbar, accessible for every component
 
-## Last Updated
-2026-07-19 04:40 UTC
+### 5. UX Polish ✅
+- **Smooth view transitions:** fade-in animation when switching between landing/workspace
+- **Loading state:** spinner + "Fetching stylesheet..." when loading from URL
+- **Toast notifications:** slide-up notifications for copy/export actions
+- **Disabled state** on render button while fetching
+- **Escape key** closes modals
+- **Responsive:** steps and stats reflow on mobile
+
+### 6. Color Scheme ✅
+- BLACK + LIME GREEN (#00ff41 / #39ff14) throughout
+- No purple anywhere
+- Consistent glow effects, shadows, and accent usage
+
+---
+
+## Technical Details
+
+- **No external dependencies** — pure vanilla HTML/CSS/JS
+- **Single-page app** with view switching
+- **CodePen integration** via POST to `https://codepen.io/pen/define`
+- **Clipboard API** with fallback for older browsers
+- **Deploy:** `python3 deploy_lab.py` pushes to gh-pages branch
+
+---
+
+## TODO / Next Steps
+- [ ] Replace `#PAYMENT_LINK` with actual Ko-fi or Buy Me a Coffee URL
+- [ ] Replace `#GITHUB_LINK` and `#TWITTER_LINK` with real URLs  
+- [ ] Track actual user numbers for social proof
+- [ ] Build actual Pro components when ready
+- [ ] Add analytics to measure conversion
+- [ ] Consider adding more free components to increase value
